@@ -1,40 +1,44 @@
-.testCaseList{
+.testCaseList {
   display: flex;
   flex-direction: column;
 }
-.testCaseList-showStyle {
+
+.testCaseList-legend {
   height: 30px;
   padding: 1px;
   width: 100%;
   border-bottom: 1px solid rgb(240, 240, 240);
   display: inline-flex;
 }
+
 .testCaseList-icon {
   flex-shrink: 0;
   margin-left: 15px;
   display: inline-flex;
 }
 
-#testList-case-chart-legend {
+.testList-case-chart-legend-legend {
   height: 30px;
   margin-left: 15px;
   display: flex;
   flex: 1;
   line-height: 0;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
-.testCaseList-content{
+.testCaseList-content {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
+
 .testList-case-control {
   height: 50px;
   display: flex;
   flex-direction: row;
   padding: 1px
 }
+
 .testList-case-control-type {
   flex: 1;
 }

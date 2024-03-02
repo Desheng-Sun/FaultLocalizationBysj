@@ -3,16 +3,26 @@ import { Table } from "antd";
 import "./testCaseList.css";
 import * as d3 from "d3";
 
-function TestCaseListTable({ nowVersion, firstTest, secondTest, testCase }) {
+function TestCaseListTable({
+  nowVersion,
+  firstTest,
+  secondTest,
+  testCase,
+  filterTestCase,
+  highlightTestCase,
+}) {
   const [useTestCase, setUseTestCase] = useState([]);
   const [tableTitle, setTableTitle] = useState([]);
   useEffect(() => {
+    
     let nowTestCase = [];
     let nowTableTitle = [];
     let num = 0;
     nowTableTitle.push({
       title: "序号",
       dataIndex: "list",
+      fixed: "left",
+      width: 50,
     });
     for (let i in testCase) {
       for (let j in testCase[i]) {
@@ -22,6 +32,18 @@ function TestCaseListTable({ nowVersion, firstTest, secondTest, testCase }) {
             dataIndex: j,
             key: j,
             isVersion: true,
+            width: 70,
+            filters: [
+              {
+                text: "正确",
+                value: "True",
+              },
+              {
+                text: "错误",
+                value: "False",
+              },
+            ],
+            onFilter: (value, record) => record[j] === value,
           });
         }
         if (!nowTestCase[i]) {
@@ -37,10 +59,13 @@ function TestCaseListTable({ nowVersion, firstTest, secondTest, testCase }) {
     nowTableTitle.push({
       title: "执行次数",
       dataIndex: "runTime",
+      width: 100,
+      sorter: (a, b) => a.runTime - b.runTime,
     });
     nowTableTitle.push({
       title: "结果",
       dataIndex: "result",
+      width: 300,
     });
     for (let i in testCase) {
       nowTestCase[i]["runTime"] = testCase[i][nowVersion][1];
@@ -48,21 +73,42 @@ function TestCaseListTable({ nowVersion, firstTest, secondTest, testCase }) {
     }
     let nowUseTestCase = [];
     for (let i in nowTestCase) {
-      if (i === firstTest || i === secondTest) {
-        nowUseTestCase.unshift(nowTestCase[i]);
+      if (filterTestCase && filterTestCase.length > 0) {
+        if (filterTestCase.includes(parseInt(i))) {
+          if (i === firstTest || i === secondTest) {
+            nowUseTestCase.unshift(nowTestCase[i]);
+          } else {
+            nowUseTestCase.push(nowTestCase[i]);
+          }
+        }
       } else {
-        nowUseTestCase.push(nowTestCase[i]);
+        if (i === firstTest || i === secondTest) {
+          nowUseTestCase.unshift(nowTestCase[i]);
+        } else {
+          nowUseTestCase.push(nowTestCase[i]);
+        }
       }
     }
-    console.log(nowUseTestCase);
     setUseTestCase(nowUseTestCase);
     setTableTitle(nowTableTitle);
-  }, [firstTest, nowVersion, secondTest, testCase]);
+  }, [firstTest, nowVersion, secondTest, testCase, filterTestCase]);
 
   // 获取当前测试用例的输出结果
   const column = useMemo(() => {
     return tableTitle.map((tempData) => {
       const isVersionResult = tempData["isVersion"];
+      let useStyle = {
+        height: "40px",
+        textAlign: "center",
+        lineHeight: "40px",
+      };
+      if (tempData["title"] === "结果") {
+        useStyle = {
+          ...useStyle,
+          overflow: "auto",
+          lineHeight: "20px",
+        };
+      }
       return {
         render: (text) => {
           if (isVersionResult) {
@@ -76,13 +122,20 @@ function TestCaseListTable({ nowVersion, firstTest, secondTest, testCase }) {
               ></div>
             );
           }
-          return <>{text}</>;
+          return <div style={useStyle}>{text}</div>;
         },
         ...tempData,
       };
     });
   }, [tableTitle]);
-  return <Table dataSource={useTestCase} columns={column}/>;
+  return (
+    <Table
+      dataSource={useTestCase}
+      columns={column}
+      scroll={{ y: 450 }}
+      size="small"
+    />
+  );
 }
 
 export default TestCaseListTable;

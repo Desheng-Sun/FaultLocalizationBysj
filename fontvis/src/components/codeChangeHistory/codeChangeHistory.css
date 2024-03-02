@@ -1,0 +1,8 @@
+.codeChangeHistory-chart{
+    width: 100%;
+    background: #fff;
+    text-align: left;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}

@@ -15,6 +15,7 @@ function ControlPanel({
 }) {
   const [totalTest, setTotalTest] = useState([]);
   useEffect(() => {
+    
     getAllTestCase().then((res) => {
       const nowTest = [];
       for (let i in res) {

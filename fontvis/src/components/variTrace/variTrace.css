@@ -1,0 +1,41 @@
+.variTrace-chart {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.variTrace-chart-variInfo {
+  display: flex;
+  flex: 1;
+}
+
+.variTrace-chart-variInfo-page {
+  flex: 1;
+  text-align: left;
+}
+
+/* 追踪变量info视图--------------------------------------------- */
+.variInfo-chart {
+  display: flex;
+  flex-direction: column;
+}
+
+.variInfo-chart-titles {
+  height: 50px;
+  display: flex;
+}
+
+.variInfo-chart-titles-tabs {
+  flex: 1;
+  overflow: hidden;
+}
+.variInfo-chart-titles-clickButton {
+  width: 30px;
+  text-align: center;
+  line-height: 40px;
+  margin-right: 10px;
+}
+.variInfo-chart-variInfo {
+  flex: 1;
+  overflow: auto;
+}

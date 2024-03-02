@@ -6,13 +6,22 @@ import ChartHeader from "../chartHeader/chart-header";
 import TestCaseListChart from "./testCaseListChart.jsx";
 import TestCaseListTable from "./testCaseListTable.jsx";
 
-function TestCaseList({ nowVersion, changeFirstTest, firstTest, secondTest }) {
+function TestCaseList({
+  w,
+  nowVersion,
+  changeFirstTest,
+  firstTest,
+  secondTest,
+  filterTestCase,
+  highlightTestCase,
+}) {
   // 当前数据的展示方式
   const [showStyle, setShowStyle] = useState("chart");
 
   // 获取所有的测试用例------------------------------------------------------------
   const [testCase, setTestCase] = useState({});
   useEffect(() => {
+    
     getAllTestCase().then((res) => {
       setTestCase(res);
     });
@@ -20,11 +29,11 @@ function TestCaseList({ nowVersion, changeFirstTest, firstTest, secondTest }) {
 
   return (
     <div
-      style={{ background: "#fff", height: "100%" }}
+      style={{ background: "#fff", height: "100%", width: w }}
       className="testCaseList"
     >
       <ChartHeader chartName="测试用例列表" />
-      <div className="testCaseList-showStyle">
+      <div className="testCaseList-legend">
         <PieChartOutlined
           onClick={() => {
             setShowStyle("chart");
@@ -43,13 +52,13 @@ function TestCaseList({ nowVersion, changeFirstTest, firstTest, secondTest }) {
           }}
           className="testCaseList-icon"
         />
-        <div id="testList-case-chart-legend">
+        <div className="testList-case-chart-legend-legend">
           <svg width={170} height={"100%"}>
             <defs>
-              <linearGradient id="Gradient1">
-                <stop class="stop1" offset="0%" stopColor="#90EE90" />
-                <stop class="stop3" offset="50%" stopColor="white" />
-                <stop class="stop3" offset="100%" stopColor="#FA8072" />
+              <linearGradient id="GradientTestCase">
+                <stop offset="0%" stopColor="#90EE90" />
+                <stop offset="50%" stopColor="white" />
+                <stop offset="100%" stopColor="#FA8072" />
               </linearGradient>
               <marker
                 id="arrow"
@@ -74,7 +83,7 @@ function TestCaseList({ nowVersion, changeFirstTest, firstTest, secondTest }) {
               y="7.5"
               width="100"
               height="15"
-              fill="url(#Gradient1)"
+              fill="url(#GradientTestCase)"
             />
             <line
               x1="40"
@@ -82,7 +91,7 @@ function TestCaseList({ nowVersion, changeFirstTest, firstTest, secondTest }) {
               x2="65"
               y2="20"
               stroke="black"
-              marker-end="url(#arrow)"
+              markerEnd="url(#arrow)"
             />
             <line
               x1="95"
@@ -90,7 +99,7 @@ function TestCaseList({ nowVersion, changeFirstTest, firstTest, secondTest }) {
               x2="120"
               y2="10"
               stroke="black"
-              marker-end="url(#arrow)"
+              markerEnd="url(#arrow)"
             />
           </svg>
         </div>
@@ -103,6 +112,7 @@ function TestCaseList({ nowVersion, changeFirstTest, firstTest, secondTest }) {
             firstTest={firstTest}
             showStyle={showStyle}
             testCase={testCase}
+            highlightTestCase={highlightTestCase}
           />
         )}
         {showStyle === "table" && (
@@ -111,6 +121,8 @@ function TestCaseList({ nowVersion, changeFirstTest, firstTest, secondTest }) {
             firstTest={firstTest}
             secondTest={secondTest}
             testCase={testCase}
+            filterTestCase={filterTestCase}
+            highlightTestCase={highlightTestCase}
           />
         )}
       </div>

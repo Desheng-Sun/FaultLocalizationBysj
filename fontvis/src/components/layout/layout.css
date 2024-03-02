@@ -111,7 +111,7 @@
   border-top-right-radius: 5px;
   box-shadow: 0 0px 10px rgb(0 0 0 / 28%);
   grid-column-start: 5;
-  grid-column-end: 7;
+  grid-column-end: 6;
   grid-row-start: 5;
   grid-row-end: 7;
 }
@@ -121,7 +121,7 @@
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   box-shadow: 0 0px 10px rgb(0 0 0 / 28%);
-  grid-column-start: 7;
+  grid-column-start: 6;
   grid-column-end: 9;
   grid-row-start: 5;
   grid-row-end: 7;

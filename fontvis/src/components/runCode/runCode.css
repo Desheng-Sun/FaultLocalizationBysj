@@ -1,0 +1,143 @@
+.runCode-chart {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  width: 100%;
+  background-color: #fff;
+}
+.runCode-chart-legend {
+  width: 100%;
+  height: 30px;
+  padding: 1px;
+  border-bottom: 1px solid rgb(240, 240, 240);
+  display: flex;
+}
+.runCode-icon {
+  flex-shrink: 0;
+  margin-left: 15px;
+  display: inline-flex;
+}
+.runCode-chart-legend-legend {
+  height: 30px;
+  margin-left: 15px;
+  display: flex;
+  flex: 1;
+  line-height: 0;
+  justify-content: flex-end;
+}
+
+.runCode-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+}
+
+
+.runCode-chart-text-result{
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  line-height: 20px;
+}
+
+.runCode-chart-text-result-isTrue {
+  width: 50px;
+  line-height: 50px;
+}
+.runCode-chart-text-result-result {
+  flex: 1;
+  background-color: rgb(246, 246, 246);
+  overflow: auto;
+}
+
+.runCode-chart-text {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.runCode-chart-text-chart {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.runCode-chart-text-chart-codeLineInfo {
+  max-width: 300px;
+  background-color: rgb(246, 246, 246);
+  display: flex;
+  flex-direction: row;
+}
+
+.runCode-chart-text-chart-codeLineInfo-funcLevel {
+  flex: 1;
+  position: relative;
+}
+
+.runCode-chart-text-chart-codeLineInfo-funcLevel-tooltip {
+  position: absolute;
+  padding: 8px;
+  text-align: left;
+  font: 16px "Hiragino Sans GB", "华文细黑", "STHeiti", "微软雅黑",
+    "Microsoft YaHei", SimHei, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  background: rgba(255, 255, 255, 0.87);
+  color: #000;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+.runCode-chart-text-chart-codeLineInfo-funcLevel-tooltip hr {
+  padding: 0;
+  margin: 8px 0;
+}
+
+.runCode-chart-text-chart-codeLineInfo-variTrace{
+  max-width: 130px;
+  overflow-x: auto;
+  overflow-y: hidden ;
+  position: relative;
+}
+
+.runCode-chart-text-chart-codeLineInfo-nowLine {
+  width: 50px;
+  position: relative;
+}
+
+.runCode-chart-text-chart-codeLineInfo-lineValue {
+  position: absolute;
+  text-align: center;
+  width: 50px;
+  height: 19px;
+  line-height: 19px;
+}
+
+.lineValue-choose {
+  background-color: rgb(220, 220, 220);
+}
+
+.lineValue-inSourceCode {
+  background-color: #D5F3F4;
+}
+.runCode-chart-code {
+  flex: 1;
+}
+
+
+.runCode-content-branch{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.runCode-content-branch-tabs{
+  max-height: 50px;
+  line-height: 20px;
+  width: 100%;
+  overflow: hidden;
+}
+
+#runCode-content-branch-chart{
+  flex: 1;
+  overflow: hidden;
+}

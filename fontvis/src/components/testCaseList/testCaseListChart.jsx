@@ -9,6 +9,7 @@ function TestCaseListChart({
   firstTest,
   showStyle,
   testCase,
+  highlightTestCase,
 }) {
   // 获取当前所有测试用例显示的页数---------------------------------------
   const [totalTest, setTotalTest] = useState(1);
@@ -20,6 +21,7 @@ function TestCaseListChart({
     setTestPage(current);
   };
   useEffect(() => {
+    
     setTotalTest(Math.ceil(Object.keys(testCase).length / 10));
     setUseTestCase(testCase);
     setTestPage(1);
@@ -32,6 +34,7 @@ function TestCaseListChart({
   };
   // 获取当前类别显示的测试用例-----------------------------------
   useEffect(() => {
+    
     let useData = {};
     if (chartTCType !== "all") {
       for (let i in testCase) {
@@ -53,7 +56,7 @@ function TestCaseListChart({
   const colorFault = d3.scaleSqrt().domain([0, 20]).range(["white", "#FA8072"]);
 
   useEffect(() => {
-    console.log(1);
+    
     if (useTestCase && showStyle === "chart") {
       let showData = [];
       let num = 0;
@@ -65,7 +68,7 @@ function TestCaseListChart({
       }
       updateChart(showData);
     }
-  }, [nowVersion, showStyle, testPage, useTestCase]);
+  }, [nowVersion, showStyle, testPage, useTestCase, highlightTestCase]);
 
   const updateChart = function (showData) {
     let svgWidth = document
@@ -148,6 +151,16 @@ function TestCaseListChart({
         ctx.fillStyle = colorRight(Math.sqrt(showData[d][2]));
       } else {
         ctx.fillStyle = colorFault(Math.sqrt(showData[d][2]));
+      }      
+      if(highlightTestCase.includes(parseInt(showData[d][0]))){
+        ctx.fillStyle = showData[d][1] == "True" ? "#90EE90" : "#FA8072"
+        ctx_mouse.strokeStyle = "#333";
+        ctx_mouse.strokeRect(
+          (d % oneLine) * squareSize,
+          parseInt(d / oneLine) * squareSize,
+          squareSize,
+          squareSize
+        );
       }
       ctx.fillRect(
         (d % oneLine) * squareSize,
@@ -155,6 +168,7 @@ function TestCaseListChart({
         squareSize,
         squareSize
       );
+
     }
 
     function getMousePosition(event, canvas) {
@@ -173,6 +187,7 @@ function TestCaseListChart({
     canvas_mouse.addEventListener("mousemove", hdlMouseMove, false);
     canvas_mouse.addEventListener("click", hdlClick, false);
   };
+  
   return (
     <>
       <div className="testList-case-control">

@@ -1,0 +1,20 @@
+.funcInvoke-chart {
+  display: flex;
+  overflow: hidden;
+  background-color: "#fff";
+  width: "100%";
+  flex-direction: column;
+}
+
+.funcInvoke-chart-legend {
+  width: 100%;
+  height: 30px;
+  padding: 1px;
+  border-bottom: 1px solid rgb(240, 240, 240);
+  display: flex;
+}
+
+#funcInvoke-chart-allFunc {
+  overflow: hidden;
+  flex: 1;
+}

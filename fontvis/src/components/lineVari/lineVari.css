@@ -1,0 +1,9 @@
+.lineVari-chart {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+.lineVari-chart-lineJson {
+  flex: 1;
+  overflow: auto;
+}
