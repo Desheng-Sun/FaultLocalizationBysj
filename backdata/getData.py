@@ -1031,17 +1031,17 @@ def getNewVersionData():
       mv print_tokens.c.gcov ../../../outputs/v0
       rm print_tokens.exe
     """
-    allThread = []
-    for i in range(0, 8):
-        allThread.append(Thread(target=createTest, args=(i, nowVersion)))
+    # allThread = []
+    # for i in range(0, 8):
+    #     allThread.append(Thread(target=createTest, args=(i, nowVersion)))
 
-    for i in range(0, 8):
-        allThread[i].start()
-    for i in range(0, 8):
-        allThread[i].join()
-    print("所有线程已完成")
-    for i in range(0, 8):
-        shutil.rmtree(nowPath + nowVersion + "/sourceCode" + str(i))
+    # for i in range(0, 8):
+    #     allThread[i].start()
+    # for i in range(0, 8):
+    #     allThread[i].join()
+    # print("所有线程已完成")
+    # for i in range(0, 8):
+    #     shutil.rmtree(nowPath + nowVersion + "/sourceCode" + str(i))
     """
     "0": [
     "right",
@@ -1160,9 +1160,10 @@ def createTest(threadNum, nowVersion):
 # 获取每一个测试用例的执行次数，以及对错
 def getRunTime(nowVersion):
     file_correct = open("./data/print_tokens0/resultData.json", "w")
-    rightResult = json.dumps(file_correct)
+    rightResult = json.load(file_correct)
     rightResult = {}
-    result = {}
+    file_correct = open(nowPath + "runTime.json", "r")
+    result = json.load(file_correct)
     resultMatrix = {}
     lineTestMatrix = {}
     timeMatrix = []
