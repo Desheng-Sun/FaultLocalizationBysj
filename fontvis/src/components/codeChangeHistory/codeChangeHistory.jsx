@@ -12,6 +12,7 @@ function CodeChangeHistoryChart({
   nowCodeVersion,
   changeNowVersion,
   changeNowCodeVersion,
+  changeIsWaitData,
 }) {
   const [codeChangeHistory, setCodeChangeHistory] = useState({});
   const [nowChangeHistory, setNowChangeHistory] = useState([]);
@@ -23,12 +24,14 @@ function CodeChangeHistoryChart({
       setNowSelectVersion(nowVersion);
     }
   }, [nowVersion, nowCodeVersion]);
-  const addVersion = useCallback (() => {
+  const addVersion = useCallback(() => {
     let nextVersion = parseInt(nowVersion.replace("v", "")) + 1;
     nextVersion = "v" + nextVersion;
+    changeIsWaitData(true);
     getNewVersionData(nextVersion).then(() => {
+      changeIsWaitData(false);
       changeNowVersion(nextVersion);
-      changeNowCodeVersion(nextVersion)
+      changeNowCodeVersion(nextVersion);
     });
   }, [nowVersion]);
   useEffect(() => {
@@ -45,32 +48,42 @@ function CodeChangeHistoryChart({
   return (
     <div className="codeChangeHistory-chart" style={{ height: h }}>
       <ChartHeader chartName="代码修改历史" />
-      <div className="sourceCode-chart-legend">
-        <svg width={400} height={"100%"}>
-          <text x="0" y="20" fontSize="12">
-            当前版本
+      <div className="codeChangeHistory-chart-legend">
+        <svg width={350} height={"100%"}>
+          <text x="5" y="20" fontSize="12">
+            新增代码
           </text>
           <rect
             x="65"
             y="7.5"
-            width="45"
+            width="30"
             height="15"
             fill="rgb(217, 247, 208)"
           />
-          <text x="140" y="20" fontSize="12">
-            上版本
+          <text x="115" y="20" fontSize="12">
+            删除代码
           </text>
           <rect
-            x="205"
+            x="175"
             y="7.5"
-            width="45"
+            width="30"
             height="15"
             fill="rgb(250,128,114)"
           />
+          <text x="225" y="20" fontSize="12">
+            修改代码
+          </text>
+          <rect
+            x="285"
+            y="7.5"
+            width="30"
+            height="15"
+            fill="rgb(255,250,205)"
+          />
         </svg>
       </div>
-      <div className="sourceCode-chart-legend">
-        <div className="sourceCode-chart-legend-control">
+      <div className="codeChangeHistory-chart-legend">
+        <div className="codeChangeHistory-chart-legend-control">
           历史版本:
           <Select
             value={nowVersion}
@@ -84,30 +97,28 @@ function CodeChangeHistoryChart({
               };
             })}
             style={{
-              width: 50,
+              width: 100,
               height: 30,
               marginLeft: 10,
               marginRight: 10,
             }}
           />
         </div>
-        <div className="sourceCode-chart-legend-control">
-          <Button
-            type="default"
-            size="middle"
-            style={{
-              width: 80,
-              height: 30,
-              marginRight: 10,
-              marginLeft: 10,
-            }}
-            onClick={addVersion}
-          >
-            确认修改
-          </Button>
-        </div>
+        <Button
+          type="default"
+          size="middle"
+          style={{
+            width: 100,
+            height: 30,
+            marginRight: 10,
+            marginLeft: 10,
+          }}
+          onClick={addVersion}
+        >
+          确认修改
+        </Button>
       </div>
-      <div id="nodifyList-chart-historyData">
+      <div className="codeChangeHistory-chart-historyData">
         {/* {nowChangeHistory.map((data) => {
           return <div className={data[0]}>{data[1]}</div>;
         })} */}

@@ -33,6 +33,7 @@ function RunCodeChart({
   changeRunCodeChooseLine,
   changeRunCodeChooseLineVari,
   changeVariTraceAll,
+  changeIsWaitData,
 }) {
   // 当前数据的展示方式
   const [showStyle, setShowStyle] = useState("text");
@@ -107,29 +108,29 @@ function RunCodeChart({
       <div className="runCode-content">
         {showStyle === "text" && (
           <>
-            {firstTest && (
-              <RunCodeChartText
-                nowVersion={nowVersion}
-                nowCodeVersion={nowCodeVersion}
-                nowTest={firstTest}
-                funcStatic={funcStatic}
-                componentId={"_1"}
-                cursorInFunc={cursorInFunc}
-                highlightFunc={highlightFunc}
-                sourceCodeCursorLine={sourceCodeCursorLine}
-                nowSelectVari={nowSelectVari}
-                variTraceAll={variTraceAll}
-                chooseVariTraceLine={chooseVariTraceLine}
-                changeTestRunData={changeFirstTestRunData}
-                changeTestRunCode={changeFirstTestRunCode}
-                changeCursorInFunc={changeCursorInFunc}
-                changeHighlightFunc={changeHighlightFunc}
-                changeRunCodeChooseLine={changeRunCodeChooseLine}
-                changeRunCodeChooseLineVari={changeRunCodeChooseLineVari}
-                changeVariTraceAll={changeVariTraceAll}
-              />
-            )}
-            {secondTest && isTestCompare && (
+            <RunCodeChartText
+              nowVersion={nowVersion}
+              nowCodeVersion={nowCodeVersion}
+              nowTest={firstTest}
+              funcStatic={funcStatic}
+              componentId={"_1"}
+              cursorInFunc={cursorInFunc}
+              highlightFunc={highlightFunc}
+              sourceCodeCursorLine={sourceCodeCursorLine}
+              nowSelectVari={nowSelectVari}
+              variTraceAll={variTraceAll}
+              chooseVariTraceLine={chooseVariTraceLine}
+              changeTestRunData={changeFirstTestRunData}
+              changeTestRunCode={changeFirstTestRunCode}
+              changeCursorInFunc={changeCursorInFunc}
+              changeHighlightFunc={changeHighlightFunc}
+              changeRunCodeChooseLine={changeRunCodeChooseLine}
+              changeRunCodeChooseLineVari={changeRunCodeChooseLineVari}
+              changeVariTraceAll={changeVariTraceAll}
+              changeIsWaitData={changeIsWaitData}
+            />
+
+            {isTestCompare && (
               <RunCodeChartText
                 nowVersion={nowVersion}
                 nowCodeVersion={nowCodeVersion}
@@ -149,6 +150,7 @@ function RunCodeChart({
                 changeRunCodeChooseLine={changeRunCodeChooseLine}
                 changeRunCodeChooseLineVari={changeRunCodeChooseLineVari}
                 changeVariTraceAll={changeVariTraceAll}
+                changeIsWaitData={changeIsWaitData}
               />
             )}
           </>

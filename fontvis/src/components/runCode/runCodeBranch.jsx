@@ -129,6 +129,7 @@ function RunCodeBranch({
   const [firstTestRunFunCFG, setFirstTestRunFunCFG] = useState([]);
   const [secondTestRunFunCFG, setSecondTestRunFunCFG] = useState([]);
   useEffect(() => {
+    console.log(firstTest, firstTestRunData)
     if (firstTest && firstTestRunData) {
       let useVersion = nowVersion;
       if (nowCodeVersion !== nowVersion) {

@@ -297,8 +297,6 @@ def getTestRunCode():
         if useData["func"][i] != useData["func"][i - 1]:
             # 判断新函数是否为当前执行函数跳入
             if useData["func"][i] in useData["code"][i - 1]:
-                print(useData["func"][i])
-                print(useData["code"][i - 1])
                 func.append(useData["func"][i])
                 newspaceLen = 0
                 for k in useData["code"][i - 1]:
@@ -653,7 +651,6 @@ def getSourceCodeNew(nowVersion):
 
 # 获取代码逻辑内的函数调用关系
 def getFuncStatic(nowVersion):
-    print(nowPath + nowVersion)
     os.system(
         "cd "
         + nowPath
@@ -669,7 +666,6 @@ def getFuncStatic(nowVersion):
     isFunc = False
     isFile = False
     fileName = ""
-    print(response)
     for j in response:
         if j["payload"] == "All defined functions:\n":
             isFunc = True
@@ -1159,9 +1155,8 @@ def createTest(threadNum, nowVersion):
 
 # 获取每一个测试用例的执行次数，以及对错
 def getRunTime(nowVersion):
-    file_correct = open("./data/print_tokens0/resultData.json", "w")
+    file_correct = open("./data/print_tokens0/resultData.json", "r")
     rightResult = json.load(file_correct)
-    rightResult = {}
     file_correct = open(nowPath + "runTime.json", "r")
     result = json.load(file_correct)
     resultMatrix = {}
@@ -1169,8 +1164,7 @@ def getRunTime(nowVersion):
     timeMatrix = []
     for j in range(0, 8):
         timeMatrix.append([])
-    with alive_bar(4130) as bar:
-        for j in range(0, 4130):
+    for j in range(0, 4130):
             nowThread = j % 8
             # 取出相应测试用例的的执行频谱
             file_correct = open(
@@ -1188,7 +1182,7 @@ def getRunTime(nowVersion):
             )
             test = file_test.read()
             runTimeNow = 0
-            nowTestResult = rightResult[j + 1] == test
+            nowTestResult = rightResult[str(j + 1)] == test
             nowLine = 1
             for content in file_correct:
                 if content.split(":", 1)[1].strip().startswith("0:"):
@@ -1222,9 +1216,8 @@ def getRunTime(nowVersion):
                 nowLine += 1
 
             # 判断结果是否相同
-            result[j + 1] = {nowVersion: [str(nowTestResult), runTimeNow, test]}
-            bar()
-    file = open(nowPath + nowVersion + "/runTime.json", mode="w")  # 代码执行次数
+            result[str(j + 1)][nowVersion] = [str(nowTestResult), runTimeNow, test]
+    file = open(nowPath + "runTime.json", mode="w")  # 代码执行次数
     file.write(json.dumps(result))
 
     resultTestNum = {}

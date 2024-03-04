@@ -34,19 +34,22 @@ function RunCodeChartText({
   changeRunCodeChooseLine,
   changeRunCodeChooseLineVari,
   changeVariTraceAll,
+  changeIsWaitData,
 }) {
   // 当前测试用例实际执行的代码行----------------------------
-  const [runCodeData, setRunCodeData] = useState([]);
+  const [runCodeData, setRunCodeData] = useState({});
 
   // 获取当前测试用例的输出结果
   const [nowTestOutputs, setNowTestOutputs] = useState(["true", "", ""]);
   const [levelMax, setLevelMax] = useState(0);
   useEffect(() => {
+    console.log(nowTest, nowVersion, nowCodeVersion);
     if (nowTest !== "") {
       let useVersion = nowVersion;
       if (nowVersion !== nowCodeVersion) {
         useVersion = nowCodeVersion;
       }
+      changeIsWaitData(true);
       getTestRunCode(nowTest, useVersion).then((res) => {
         setRunCodeData(res);
         let useData = new Set();
@@ -55,7 +58,6 @@ function RunCodeChartText({
         }
         changeTestRunCode(Array.from(useData));
         setLevelMax(Math.max(...res["level"]));
-        changeTestRunData(true);
       });
       getTestOutput(nowTest, useVersion).then((res) => {
         setNowTestOutputs(res);
@@ -69,7 +71,7 @@ function RunCodeChartText({
   const [runCodeFuncLevel, setRunCodeFuncLevel] = useState([]);
 
   useEffect(() => {
-    if (runCodeData && nowTest) {
+    if (Object.keys(runCodeData).length > 0 && nowTest) {
       let useRunCode = "";
       for (let i in runCodeData["code"]) {
         useRunCode += runCodeData["spaceLen"][i] + runCodeData["code"][i];
@@ -80,6 +82,8 @@ function RunCodeChartText({
         useVersion = nowCodeVersion;
       }
       getRunCodeLineFuncLevel(nowTest, useVersion).then((res) => {
+        changeIsWaitData(false);
+        changeTestRunData(true)
         setRunCodeFuncLevel(res);
       });
     }
@@ -88,23 +92,25 @@ function RunCodeChartText({
   // 当前鼠标光标改变位置
   const [nowCursorLine, setNowCursorLine] = useState(0);
   const onCursorChange = function (e) {
-    changeRunCodeChooseLine(runCodeData["line"][e.cursor.row]);
-    changeHighlightFunc(runCodeData["func"][e.cursor.row]);
-    setNowCursorLine(e.cursor.row + 1);
-    changeRunCodeChooseLineVari([
-      nowTest,
-      e.cursor.row + 1,
-      {
-        ...runCodeData["variables"][e.cursor.row],
-        ...runCodeData["definedVari"],
-      },
-    ]);
+    if (Object.keys(runCodeData).length > 0) {
+      changeRunCodeChooseLine(runCodeData["line"][e.cursor.row]);
+      changeHighlightFunc(runCodeData["func"][e.cursor.row]);
+      setNowCursorLine(e.cursor.row + 1);
+      changeRunCodeChooseLineVari([
+        nowTest,
+        e.cursor.row + 1,
+        {
+          ...runCodeData["variables"][e.cursor.row],
+          ...runCodeData["definedVari"],
+        },
+      ]);
+    }
   };
 
   //当前追踪了执行过程中的变量
   useEffect(() => {
     if (
-      runCodeData &&
+      Object.keys(runCodeData).length > 0 &&
       nowSelectVari[0] === nowTest &&
       nowSelectVari[1] === nowCursorLine
     ) {
@@ -167,7 +173,7 @@ function RunCodeChartText({
 
   // 改变当前页面的滚动高度，将相关代码展示出来-------------------------------------
   useEffect(() => {
-    if (chooseVariTraceLine[0] === nowTest) {
+    if (chooseVariTraceLine[0] === nowTest && nowTest !== "") {
       let scrollDiv = document
         .getElementById(`runCode_code${componentId}`)
         .getElementsByClassName("ace_scrollbar-v")[0];
@@ -175,6 +181,7 @@ function RunCodeChartText({
       if (chooseVariTraceLine[1] >= 1) {
         changeCursorInFunc(runCodeData["func"][chooseVariTraceLine[1] - 1]);
       }
+      changeLineInfoTick();
     }
   }, [chooseVariTraceLine]);
 
@@ -188,6 +195,7 @@ function RunCodeChartText({
     highlightFunc,
     variTraceAll,
     chooseVariTraceLine,
+    runCodeFuncLevel.length
   ]);
 
   const [runCodeLineInfoTick, setRunCodeLineInfoTick] = useState(0);
@@ -488,63 +496,70 @@ function RunCodeChartText({
   };
 
   return (
-    <div className="runCode-chart-text">
-      <div className="runCode-chart-text-result">
-        <div
-          className="runCode-chart-text-result-isTrue"
-          style={{
-            backgroundColor: `${
-              nowTestOutputs[0] === "true" ? "#90EE90" : "#FA8072"
-            }`,
-          }}
-        >
-          {nowTestOutputs[0] === "true" ? "正确" : "错误"}
-        </div>
-        <div className="runCode-chart-text-result-result">
-          {nowTestOutputs[1]}
-        </div>
-        <div className="runCode-chart-text-result-result">
-          {nowTestOutputs[2]}
-        </div>
-      </div>
-      <div className="runCode-chart-text-chart">
-        <div className="runCode-chart-text-chart-codeLineInfo">
-          <div
-            className="runCode-chart-text-chart-codeLineInfo-funcLevel"
-            id={`runCode_funcLevel${componentId}`}
-          >
+    <>
+      {nowTest !== "" && (
+        <div className="runCode-chart-text">
+          <div className="runCode-chart-text-result">
             <div
-              className="runCode-chart-text-chart-codeLineInfo-funcLevel-tooltip"
-              id={`runCode_funcLevel_tooltip${componentId}`}
-            />
+              className="runCode-chart-text-result-isTrue"
+              style={{
+                backgroundColor: `${
+                  nowTestOutputs[0] === "true" ? "#90EE90" : "#FA8072"
+                }`,
+              }}
+            >
+              {nowTestOutputs[0] === "true" ? "正确" : "错误"}
+            </div>
+            <div className="runCode-chart-text-result-result">
+              {nowTestOutputs[1]}
+            </div>
+            <div className="runCode-chart-text-result-result">
+              {nowTestOutputs[2]}
+            </div>
           </div>
-          <div
-            className="runCode-chart-text-chart-codeLineInfo-variTrace"
-            id={`runCode_variTrace${componentId}`}
-          />
-          <div
-            className="runCode-chart-text-chart-codeLineInfo-nowLine"
-            id={`runCode_nowLine${componentId}`}
-          />
-        </div>
+          <div className="runCode-chart-text-chart">
+            <div className="runCode-chart-text-chart-codeLineInfo">
+              <div
+                className="runCode-chart-text-chart-codeLineInfo-funcLevel"
+                id={`runCode_funcLevel${componentId}`}
+              >
+                <div
+                  className="runCode-chart-text-chart-codeLineInfo-funcLevel-tooltip"
+                  id={`runCode_funcLevel_tooltip${componentId}`}
+                />
+              </div>
+              <div
+                className="runCode-chart-text-chart-codeLineInfo-variTrace"
+                id={`runCode_variTrace${componentId}`}
+              />
+              <div
+                className="runCode-chart-text-chart-codeLineInfo-nowLine"
+                id={`runCode_nowLine${componentId}`}
+              />
+            </div>
 
-        <div className="runCode-chart-code" id={`runCode_code${componentId}`}>
-          <AceEditor
-            mode="c_cpp"
-            theme="tomorrow"
-            showPrintMargin={true}
-            fontSize={16}
-            value={runCode}
-            height="100%"
-            width="100%"
-            name={`runCode-chart-code-codeShow${componentId}`}
-            onScroll={changeLineInfoTick}
-            onCursorChange={onCursorChange}
-            readOnly={true}
-          />
+            <div
+              className="runCode-chart-code"
+              id={`runCode_code${componentId}`}
+            >
+              <AceEditor
+                mode="c_cpp"
+                theme="tomorrow"
+                showPrintMargin={true}
+                fontSize={16}
+                value={runCode}
+                height="100%"
+                width="100%"
+                name={`runCode-chart-code-codeShow${componentId}`}
+                onScroll={changeLineInfoTick}
+                onCursorChange={onCursorChange}
+                readOnly={true}
+              />
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 

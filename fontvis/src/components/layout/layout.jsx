@@ -1,3 +1,4 @@
+import { Spin } from "antd";
 import CodeChangeHistoryChart from "../codeChangeHistory/codeChangeHistory";
 import ControlPanel from "../control/control";
 import FuncInvokeChart from "../funcInvoke/funcInvoke";
@@ -59,7 +60,10 @@ export default function Layout() {
   const changeNowCodeVersion = function (data) {
     setNowCodeVersion(data);
   };
-
+  const [isWaitData, setIsWaitData] = useState(false);
+  const changeIsWaitData = function (data) {
+    setIsWaitData(data);
+  };
   // 当前是否开启测试用例对比，当前选择的测试用例
   const [isTestCompare, setIsTestCompare] = useState(false);
   const changeIsTestCompare = function (data) {
@@ -135,7 +139,6 @@ export default function Layout() {
     {},
   ]);
   const changeRunCodeChooseLineVari = (data) => {
-    console.log(data);
     setRunCodeChooseLineVari(data);
   };
   useEffect(() => {
@@ -164,114 +167,118 @@ export default function Layout() {
   };
 
   return (
-    <div id="layout">
-      <div id="title">软件故障定位可视分析系统</div>
-      <div id="content">
-        <div id="controlPanel">
-          <ControlPanel
-            isTestCompare={isTestCompare}
-            changeIsTestCompare={changeIsTestCompare}
-            changeFirstTest={changeFirstTest}
-            changeSecondTest={changeSecondTest}
-            firstTest={firstTest}
-            secondTest={secondTest}
-          />
-        </div>
-        <div id="testList">
-          <TestCaseList
-            w={testCaseListWidth}
-            nowVersion={nowVersion}
-            changeFirstTest={changeFirstTest}
-            firstTest={firstTest}
-            secondTest={secondTest}
-            filterTestCase={filterTestCase}
-            highlightTestCase={highlightTestCase}
-          />
-        </div>
-        <div id="changeHistory">
-          <CodeChangeHistoryChart
-            h={codeChangeHistoryHeight}
-            nowVersion={nowVersion}
-            nowCodeVersion={nowCodeVersion}
-            changeNowVersion={changeNowVersion}
-            changeNowCodeVersion={changeNowCodeVersion}
-          />
-        </div>
-        <div id="sourceCode">
-          <SourceCodeChart
-            h={sourceCodeHeight}
-            nowVersion={nowVersion}
-            nowCodeVersion={nowCodeVersion}
-            firstTestRunCode={firstTestRunCode}
-            secondTestRunCode={secondTestRunCode}
-            runCodeChooseLine={runCodeChooseLine}
-            changeFilterTestCase={changeFilterTestCase}
-            changeHighlightTestCase={changeHighlightTestCase}
-            changeCursorInFunc={changeCursorInFunc}
-            changeHighlightFunc={changeHighlightFunc}
-            changeNowCodeVersion={changeNowCodeVersion}
-            changeSourceCodeCursorLine={changeSourceCodeCursorLine}
-          />
-        </div>
-        <div id="funcInvoke">
-          <FuncInvokeChart
-            h={funcInvokeiHeight}
-            nowVersion={nowVersion}
-            nowCodeVersion={nowCodeVersion}
-            cursorInFunc={cursorInFunc}
-            highlightFunc={highlightFunc}
-            firstTest={firstTest}
-            secondTest={secondTest}
-            firstTestRunData={firstTestRunData}
-            secondTestRunData={secondTestRunData}
-          />
-        </div>
-        <div id="runCode">
-          <RunCodeChart
-            h={runCodeHeight}
-            nowVersion={nowVersion}
-            nowCodeVersion={nowCodeVersion}
-            firstTest={firstTest}
-            secondTest={secondTest}
-            cursorInFunc={cursorInFunc}
-            highlightFunc={highlightFunc}
-            isTestCompare={isTestCompare}
-            sourceCodeCursorLine={sourceCodeCursorLine}
-            nowSelectVari={nowSelectVari}
-            variTraceAll={variTraceAll}
-            chooseVariTraceLine={chooseVariTraceLine}
-            firstTestRunData={firstTestRunData}
-            secondTestRunData={secondTestRunData}
-            changeFirstTestRunData={changeFirstTestRunData}
-            changeSecondTestRunData={changeSecondTestRunData}
-            changeFirstTestRunCode={changeFirstTestRunCode}
-            changeSecondTestRunCode={changeSecondTestRunCode}
-            changeCursorInFunc={changeCursorInFunc}
-            changeHighlightFunc={changeHighlightFunc}
-            changeRunCodeChooseLine={changeRunCodeChooseLine}
-            changeRunCodeChooseLineVari={changeRunCodeChooseLineVari}
-            changeVariTraceAll={changeVariTraceAll}
-          />
-        </div>
-        <div id="lineVari">
-          <LineVariChart
-            h={lineVariHeight}
-            w={lineVariWidth}
-            runCodeChooseLineVari={runCodeChooseLineVari}
-            changeNowSelectVari={changeNowSelectVari}
-          />
-        </div>
-        <div id="variTrace">
-          <VariTraceChart
-            h={variTraceHeight}
-            w={variTraceiWidth}
-            variTraceAll={variTraceAll}
-            changeNowSelectVari={changeNowSelectVari}
-            changeVariTraceAll={changeVariTraceAll}
-            changeChooseVariTraceLine={changeChooseVariTraceLine}
-          />
+    <Spin spinning={isWaitData}>
+      <div className="layout">
+        <div className="title">软件故障定位可视分析系统</div>
+        <div className="content">
+          <div id="controlPanel">
+            <ControlPanel
+              isTestCompare={isTestCompare}
+              changeIsTestCompare={changeIsTestCompare}
+              changeFirstTest={changeFirstTest}
+              changeSecondTest={changeSecondTest}
+              firstTest={firstTest}
+              secondTest={secondTest}
+            />
+          </div>
+          <div id="testList">
+            <TestCaseList
+              w={testCaseListWidth}
+              nowVersion={nowVersion}
+              changeFirstTest={changeFirstTest}
+              firstTest={firstTest}
+              secondTest={secondTest}
+              filterTestCase={filterTestCase}
+              highlightTestCase={highlightTestCase}
+            />
+          </div>
+          <div id="changeHistory">
+            <CodeChangeHistoryChart
+              h={codeChangeHistoryHeight}
+              nowVersion={nowVersion}
+              nowCodeVersion={nowCodeVersion}
+              changeNowVersion={changeNowVersion}
+              changeNowCodeVersion={changeNowCodeVersion}
+              changeIsWaitData={changeIsWaitData}
+            />
+          </div>
+          <div id="sourceCode">
+            <SourceCodeChart
+              h={sourceCodeHeight}
+              nowVersion={nowVersion}
+              nowCodeVersion={nowCodeVersion}
+              firstTestRunCode={firstTestRunCode}
+              secondTestRunCode={secondTestRunCode}
+              runCodeChooseLine={runCodeChooseLine}
+              changeFilterTestCase={changeFilterTestCase}
+              changeHighlightTestCase={changeHighlightTestCase}
+              changeCursorInFunc={changeCursorInFunc}
+              changeHighlightFunc={changeHighlightFunc}
+              changeNowCodeVersion={changeNowCodeVersion}
+              changeSourceCodeCursorLine={changeSourceCodeCursorLine}
+            />
+          </div>
+          <div id="funcInvoke">
+            <FuncInvokeChart
+              h={funcInvokeiHeight}
+              nowVersion={nowVersion}
+              nowCodeVersion={nowCodeVersion}
+              cursorInFunc={cursorInFunc}
+              highlightFunc={highlightFunc}
+              firstTest={firstTest}
+              secondTest={secondTest}
+              firstTestRunData={firstTestRunData}
+              secondTestRunData={secondTestRunData}
+            />
+          </div>
+          <div id="runCode">
+            <RunCodeChart
+              h={runCodeHeight}
+              nowVersion={nowVersion}
+              nowCodeVersion={nowCodeVersion}
+              firstTest={firstTest}
+              secondTest={secondTest}
+              cursorInFunc={cursorInFunc}
+              highlightFunc={highlightFunc}
+              isTestCompare={isTestCompare}
+              sourceCodeCursorLine={sourceCodeCursorLine}
+              nowSelectVari={nowSelectVari}
+              variTraceAll={variTraceAll}
+              chooseVariTraceLine={chooseVariTraceLine}
+              firstTestRunData={firstTestRunData}
+              secondTestRunData={secondTestRunData}
+              changeFirstTestRunData={changeFirstTestRunData}
+              changeSecondTestRunData={changeSecondTestRunData}
+              changeFirstTestRunCode={changeFirstTestRunCode}
+              changeSecondTestRunCode={changeSecondTestRunCode}
+              changeCursorInFunc={changeCursorInFunc}
+              changeHighlightFunc={changeHighlightFunc}
+              changeRunCodeChooseLine={changeRunCodeChooseLine}
+              changeRunCodeChooseLineVari={changeRunCodeChooseLineVari}
+              changeVariTraceAll={changeVariTraceAll}
+              changeIsWaitData={changeIsWaitData}
+            />
+          </div>
+          <div id="lineVari">
+            <LineVariChart
+              h={lineVariHeight}
+              w={lineVariWidth}
+              runCodeChooseLineVari={runCodeChooseLineVari}
+              changeNowSelectVari={changeNowSelectVari}
+            />
+          </div>
+          <div id="variTrace">
+            <VariTraceChart
+              h={variTraceHeight}
+              w={variTraceiWidth}
+              variTraceAll={variTraceAll}
+              changeNowSelectVari={changeNowSelectVari}
+              changeVariTraceAll={changeVariTraceAll}
+              changeChooseVariTraceLine={changeChooseVariTraceLine}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </Spin>
   );
 }

@@ -21,7 +21,6 @@ function TestCaseListChart({
     setTestPage(current);
   };
   useEffect(() => {
-    
     setTotalTest(Math.ceil(Object.keys(testCase).length / 10));
     setUseTestCase(testCase);
     setTestPage(1);
@@ -34,7 +33,6 @@ function TestCaseListChart({
   };
   // 获取当前类别显示的测试用例-----------------------------------
   useEffect(() => {
-    
     let useData = {};
     if (chartTCType !== "all") {
       for (let i in testCase) {
@@ -56,8 +54,7 @@ function TestCaseListChart({
   const colorFault = d3.scaleSqrt().domain([0, 20]).range(["white", "#FA8072"]);
 
   useEffect(() => {
-    
-    if (useTestCase && showStyle === "chart") {
+    if (useTestCase && showStyle === "chart" ) {
       let showData = [];
       let num = 0;
       for (let i in useTestCase) {

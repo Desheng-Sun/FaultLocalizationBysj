@@ -238,95 +238,95 @@ def getRunTime():
         rightResult[i + 1] = file_correct.read()
     file_correct = open("./data/" + projectName + "0/resultData.json", "w")
     file_correct.write(json.dumps(rightResult))
-    for i in range(1, 8):
-        result = {}
-        resultMatrix = {}
-        lineTestMatrix = {}
-        timeMatrix = []
-        for j in range(0, 8):
-            timeMatrix.append([])
-        with alive_bar(4130) as bar:
-            for j in range(0, 4130):
-                nowThread = j % 8
-                # 取出相应测试用例的的执行频谱
-                file_correct = open(
-                    "./data/print_tokens"
-                    + str(i)
-                    + "/v0/outputs/t"
-                    + str(j + 1)
-                    + "_print_tokens.c.gcov",
-                    mode="r",
-                )
-                # 将变异版本的测试用例的结果取出
-                file_test = open(
-                    "./data/" + projectName + str(i) + "/v0/outputs/t" + str(j + 1),
-                    mode="r",
-                )
-                test = file_test.read()
-                runTimeNow = 0
-                nowTestResult = rightResult[j + 1] == test
-                nowLine = 1
-                for content in file_correct:
-                    if content.split(":", 1)[1].strip().startswith("0:"):
-                        continue
-                    if nowLine not in resultMatrix:
-                        for k in range(0, 8):
-                            timeMatrix[k].append(0)
-                        resultMatrix[nowLine] = []
-                        lineTestMatrix[nowLine] = []
-                    content = content.split(":", 1)[0]
-                    if not "-" in content and not "#####" in content:
-                        nowLineData = int(content) - timeMatrix[nowThread][nowLine - 1]
-                        runTimeNow += nowLineData
-                        timeMatrix[nowThread][nowLine - 1] = int(content)
-                        if nowLineData > 0:
-                            lineTestMatrix[nowLine].append(j + 1)
-                            if nowTestResult:
-                                resultMatrix[nowLine].append(1)
-                            else:
-                                resultMatrix[nowLine].append(3)
-                        else:
-                            if nowTestResult:
-                                resultMatrix[nowLine].append(0)
-                            else:
-                                resultMatrix[nowLine].append(2)
-                    else:
-                        if nowTestResult:
-                            resultMatrix[nowLine].append(0)
-                        else:
-                            resultMatrix[nowLine].append(2)
-                    nowLine += 1
+    # for i in range(1, 8):
+    #     result = {}
+    #     resultMatrix = {}
+    #     lineTestMatrix = {}
+    #     timeMatrix = []
+    #     for j in range(0, 8):
+    #         timeMatrix.append([])
+    #     with alive_bar(4130) as bar:
+    #         for j in range(0, 4130):
+    #             nowThread = j % 8
+    #             # 取出相应测试用例的的执行频谱
+    #             file_correct = open(
+    #                 "./data/print_tokens"
+    #                 + str(i)
+    #                 + "/v0/outputs/t"
+    #                 + str(j + 1)
+    #                 + "_print_tokens.c.gcov",
+    #                 mode="r",
+    #             )
+    #             # 将变异版本的测试用例的结果取出
+    #             file_test = open(
+    #                 "./data/" + projectName + str(i) + "/v0/outputs/t" + str(j + 1),
+    #                 mode="r",
+    #             )
+    #             test = file_test.read()
+    #             runTimeNow = 0
+    #             nowTestResult = rightResult[j + 1] == test
+    #             nowLine = 1
+    #             for content in file_correct:
+    #                 if content.split(":", 1)[1].strip().startswith("0:"):
+    #                     continue
+    #                 if nowLine not in resultMatrix:
+    #                     for k in range(0, 8):
+    #                         timeMatrix[k].append(0)
+    #                     resultMatrix[nowLine] = []
+    #                     lineTestMatrix[nowLine] = []
+    #                 content = content.split(":", 1)[0]
+    #                 if not "-" in content and not "#####" in content:
+    #                     nowLineData = int(content) - timeMatrix[nowThread][nowLine - 1]
+    #                     runTimeNow += nowLineData
+    #                     timeMatrix[nowThread][nowLine - 1] = int(content)
+    #                     if nowLineData > 0:
+    #                         lineTestMatrix[nowLine].append(j + 1)
+    #                         if nowTestResult:
+    #                             resultMatrix[nowLine].append(1)
+    #                         else:
+    #                             resultMatrix[nowLine].append(3)
+    #                     else:
+    #                         if nowTestResult:
+    #                             resultMatrix[nowLine].append(0)
+    #                         else:
+    #                             resultMatrix[nowLine].append(2)
+    #                 else:
+    #                     if nowTestResult:
+    #                         resultMatrix[nowLine].append(0)
+    #                     else:
+    #                         resultMatrix[nowLine].append(2)
+    #                 nowLine += 1
 
-                # 判断结果是否相同
-                result[j + 1] = {"v0": [str(nowTestResult), runTimeNow, test]}
-                bar()
-        file = open(
-            "./data/" + projectName + str(i) + "/runTime.json", mode="w"
-        )  # 代码执行次数
-        file.write(json.dumps(result))
+    #             # 判断结果是否相同
+    #             result[j + 1] = {"v0": [str(nowTestResult), runTimeNow, test]}
+    #             bar()
+    #     file = open(
+    #         "./data/" + projectName + str(i) + "/runTime.json", mode="w"
+    #     )  # 代码执行次数
+    #     file.write(json.dumps(result))
 
-        resultTestNum = {}
-        for j in resultMatrix:
-            resultTestNum[j] = {
-                "aef": resultMatrix[j].count(3),
-                "aep": resultMatrix[j].count(1),
-                "anf": resultMatrix[j].count(2),
-                "anp": resultMatrix[j].count(0),
-            }
+    #     resultTestNum = {}
+    #     for j in resultMatrix:
+    #         resultTestNum[j] = {
+    #             "aef": resultMatrix[j].count(3),
+    #             "aep": resultMatrix[j].count(1),
+    #             "anf": resultMatrix[j].count(2),
+    #             "anp": resultMatrix[j].count(0),
+    #         }
 
-        file = open(
-            "./data/" + projectName + str(i) + "/v0/allTestDoubt.json", mode="w"
-        )  # 结果矩阵
-        file.write(json.dumps(resultTestNum))
+    #     file = open(
+    #         "./data/" + projectName + str(i) + "/v0/allTestDoubt.json", mode="w"
+    #     )  # 结果矩阵
+    #     file.write(json.dumps(resultTestNum))
 
-        file = open(
-            "./data/" + projectName + str(i) + "/v0/lineTestCase.json", mode="w"
-        )  # 结果矩阵
-        file.write(json.dumps(lineTestMatrix))
-        file = open(
-            "./data/" + projectName + str(i) + "/v0/speMatrix.json", mode="w"
-        )  # 结果矩阵
-        file.write(json.dumps(resultMatrix))
+    #     file = open(
+    #         "./data/" + projectName + str(i) + "/v0/lineTestCase.json", mode="w"
+    #     )  # 结果矩阵
+    #     file.write(json.dumps(lineTestMatrix))
+    #     file = open(
+    #         "./data/" + projectName + str(i) + "/v0/speMatrix.json", mode="w"
+    #     )  # 结果矩阵
+    #     file.write(json.dumps(resultMatrix))
 
 
 # 获取代码逻辑内的函数调用关系
@@ -1089,16 +1089,9 @@ if __name__ == "__main__":
     "error,\t\"\".\nidentifier,\t\"J0Bey\".\ncomma.\neof.\n"
     ],
     """
-    # getRunTime()
+    getRunTime()
     # getFuncStatic()
     # getCodeBranch()
     # getDiffFromVersion()
 
     # getRunCodeBranchSkip()
-    d = difflib.Differ()
-    diffData = list(
-        d.compare(
-            "123456\n7891".splitlines(keepends=False), "12345\n78910".splitlines(keepends=False)
-        )
-    )
-    print(diffData)

@@ -60,7 +60,6 @@ function SourceCodeChart({
       }
       valueData = valueData.sort((a, b) => b[1] - a[1]);
       drawCoverBar(valueData);
-      changeLineInfoTick();
     });
     getCodeLineInFunc(nowVersion).then((res) => {
       setLineInFuncData(res);
@@ -89,7 +88,6 @@ function SourceCodeChart({
     if (data.key !== "") {
       setCheckFile(checkFile);
     }
-    changeLineInfoTick();
   };
 
   useEffect(() => {
@@ -99,7 +97,6 @@ function SourceCodeChart({
     }
     getSourceCode(checkFile, useVersion).then((res) => {
       setSourceCode(res.info);
-      changeLineInfoTick();
     });
   }, [checkFile, nowVersion, nowCodeVersion]);
 
@@ -138,7 +135,6 @@ function SourceCodeChart({
       }
       valueData = valueData.sort((a, b) => b[1] - a[1]);
       drawDoubtBar(valueData);
-      changeLineInfoTick();
     });
   }, [selectDoubtMethod, nowVersion]);
 
@@ -147,7 +143,6 @@ function SourceCodeChart({
   const changeCursorLine = function (select) {
     changeSourceCodeCursorLine(select.cursor.row + 1);
     setCursorLine(select.cursor.row + 1);
-    changeLineInfoTick();
   };
 
   useEffect(() => {
@@ -195,7 +190,7 @@ function SourceCodeChart({
   // 异步更新视图---------------------------------------------------
   useEffect(() => {
     changeLineInfoTick();
-  }, [firstTestRunCode, secondTestRunCode]);
+  }, [firstTestRunCode, secondTestRunCode, cursorLine, lineDoubtData, sourceCode, cursorOverLine]);
   const [lineInfoTick, setLineInfoTick] = useState(0);
   const changeLineInfoTick = useCallback(() => {
     let data = lineInfoTick + 1;
@@ -550,7 +545,7 @@ function SourceCodeChart({
             }}
             onClick={changeSourceCodeConfirm}
           >
-            确认修改
+            保存修改
           </Button>
         </div>
         <div className="sourceCode-chart-legend-control">

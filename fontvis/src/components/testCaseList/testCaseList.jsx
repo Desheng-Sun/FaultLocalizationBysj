@@ -17,15 +17,15 @@ function TestCaseList({
 }) {
   // 当前数据的展示方式
   const [showStyle, setShowStyle] = useState("chart");
-
+  const [nowUseVersion, setNowUseVersion] = useState("");
   // 获取所有的测试用例------------------------------------------------------------
   const [testCase, setTestCase] = useState({});
   useEffect(() => {
-    
     getAllTestCase().then((res) => {
       setTestCase(res);
+      setNowUseVersion(nowVersion);
     });
-  }, []);
+  }, [nowVersion]);
 
   return (
     <div
@@ -105,25 +105,29 @@ function TestCaseList({
         </div>
       </div>
       <div className="testCaseList-content">
-        {showStyle === "chart" && (
-          <TestCaseListChart
-            nowVersion={nowVersion}
-            changeFirstTest={changeFirstTest}
-            firstTest={firstTest}
-            showStyle={showStyle}
-            testCase={testCase}
-            highlightTestCase={highlightTestCase}
-          />
-        )}
-        {showStyle === "table" && (
-          <TestCaseListTable
-            nowVersion={nowVersion}
-            firstTest={firstTest}
-            secondTest={secondTest}
-            testCase={testCase}
-            filterTestCase={filterTestCase}
-            highlightTestCase={highlightTestCase}
-          />
+        {nowUseVersion && (
+          <>
+            {showStyle === "chart" && (
+              <TestCaseListChart
+                nowVersion={nowUseVersion}
+                changeFirstTest={changeFirstTest}
+                firstTest={firstTest}
+                showStyle={showStyle}
+                testCase={testCase}
+                highlightTestCase={highlightTestCase}
+              />
+            )}
+            {showStyle === "table" && (
+              <TestCaseListTable
+                nowVersion={nowUseVersion}
+                firstTest={firstTest}
+                secondTest={secondTest}
+                testCase={testCase}
+                filterTestCase={filterTestCase}
+                highlightTestCase={highlightTestCase}
+              />
+            )}
+          </>
         )}
       </div>
     </div>

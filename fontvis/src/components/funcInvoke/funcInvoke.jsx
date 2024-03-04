@@ -137,7 +137,7 @@ function FuncInvokeChart({
   useEffect(() => {
     if (Object.keys(funcInvokeStatic).length > 0) {
       let nowFuncOver = highlightFunc;
-      if (highlightFunc==="") {
+      if (highlightFunc === "") {
         nowFuncOver = cursorInFunc;
       }
       let firstTestNodes = new Set();
@@ -161,7 +161,7 @@ function FuncInvokeChart({
       let highlightNodes = new Set();
       let highlightEdges = new Set();
       for (let i of funcInvokeStatic["edges"]) {
-        if (i["source"]===nowFuncOver || i["target"]===nowFuncOver) {
+        if (i["source"] === nowFuncOver || i["target"] === nowFuncOver) {
           highlightNodes.add(i["source"]);
           highlightNodes.add(i["target"]);
           highlightEdges.add(i["source"] + "->" + i["target"]);
@@ -171,43 +171,50 @@ function FuncInvokeChart({
       highlightEdges = Array.from(highlightEdges);
       let useNodes = {};
       for (let i of funcInvokeStatic["nodes"]) {
-        let isInFirstTest = firstTestNodes.includes(i.id);
-        let isInSecondTest = secondTestNodes.includes(i.id);
         let fillTestColor = "#fff";
         let fillHighColor =
-          i.id===nowFuncOver
+          i.id === nowFuncOver
             ? "#D7FFF0"
             : highlightNodes.includes(i.id)
             ? "#D5F3F4"
             : "#fff";
-        let strokeColor = "#aaa";
-        if (isInFirstTest && isInSecondTest) {
-          fillTestColor = "rgb(255,250,205)";
-          strokeColor = "#000";
-        } else if (isInFirstTest && !isInSecondTest) {
-          fillTestColor = "#90EE90";
-          strokeColor = "#000";
-        } else if (!isInFirstTest && isInSecondTest) {
-          fillTestColor = "#FA8072";
-          strokeColor = "#000";
+        let strokeColor = "#000";
+        if (firstTestNodes.length > 0 || secondTestNodes.length > 0) {
+          let isInFirstTest = firstTestNodes.includes(i.id);
+          let isInSecondTest = secondTestNodes.includes(i.id);
+          strokeColor = "#aaa";
+          if (isInFirstTest && isInSecondTest) {
+            fillTestColor = "rgb(255,250,205)";
+            strokeColor = "#000";
+          } else if (isInFirstTest && !isInSecondTest) {
+            fillTestColor = "#90EE90";
+            strokeColor = "#000";
+          } else if (!isInFirstTest && isInSecondTest) {
+            fillTestColor = "#FA8072";
+            strokeColor = "#000";
+          }
         }
+
         let fillColor =
           fillHighColor === "#fff" ? fillTestColor : fillHighColor;
         useNodes[i.id] = `fill:${fillColor};stroke:${strokeColor}`;
       }
+
       let useEdges = {};
       let useEdgeLabel = {};
       for (let i of funcInvokeStatic["edges"]) {
         let nowEdges = i.source + "->" + i.target;
-        let isInFirstTest = firstTestEdges.includes(nowEdges);
-        let isInSecondTest = secondTestEdges.includes(nowEdges);
-        useEdges[nowEdges] = `stroke:${
-          isInFirstTest || isInSecondTest ? "#000" : "#aaa"
-        };fill:#fff;stroke-width:1px;opacity:0.5;`;
+        let edgeColor = "#000";
+        if (firstTestEdges.length > 0 || secondTestEdges.length > 0) {
+          let isInFirstTest = firstTestEdges.includes(nowEdges);
+          let isInSecondTest = secondTestEdges.includes(nowEdges);
+          edgeColor = isInFirstTest || isInSecondTest ? "#000" : "#aaa";
+        }
+        useEdges[
+          nowEdges
+        ] = `stroke:${edgeColor};fill:#fff;stroke-width:1px;opacity:0.5;`;
 
-        useEdgeLabel[nowEdges + ":label"] = `fill:${
-          isInFirstTest || isInSecondTest ? "#000" : "#aaa"
-        };`;
+        useEdgeLabel[nowEdges + ":label"] = `fill:${edgeColor};`;
       }
       funcInvokeChartChange(useNodes, useEdges, useEdgeLabel);
     }
@@ -232,10 +239,7 @@ function FuncInvokeChart({
     for (let i of chartSvgG.selectAll(".edgeLabel")) {
       d3.select(i)
         .select("text")
-        .attr(
-          "style",
-          useEdgeLabel[d3.select(i).select("g").attr("id")]
-        );
+        .attr("style", useEdgeLabel[d3.select(i).select("g").attr("id")]);
     }
   };
 
