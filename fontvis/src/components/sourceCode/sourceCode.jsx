@@ -9,7 +9,6 @@ import {
   getNewVersionCode,
 } from "../../api/interface";
 import { Select, Button, Menu } from "antd";
-import { FolderOpenOutlined, FileTextOutlined } from "@ant-design/icons";
 import "./sourceCode.css";
 import * as d3 from "d3";
 
@@ -47,8 +46,7 @@ function SourceCodeChart({
       useVersion = nowCodeVersion;
     }
     getFileItem(useVersion).then((res) => {
-      let data = getFileItemData(res);
-      setFileItemData(data);
+      setFileItemData(res);
     });
     getLineTestCase(nowVersion).then((res) => {
       setLineTestCase(res);
@@ -66,19 +64,6 @@ function SourceCodeChart({
     });
   }, [nowVersion, nowCodeVersion]);
 
-  const getFileItemData = function (data) {
-    if (data["value"] === "file") {
-      data["icon"] = <FileTextOutlined />;
-    } else {
-      data["icon"] = <FolderOpenOutlined />;
-    }
-    if (!data["children"]) {
-      return data;
-    }
-    data["children"] = getFileItemData(data["children"]);
-    return data;
-  };
-
   // 当前选择的文件名，并获取对应的代码信息---------------------------------------------------------------------------------
   const [sourceCode, setSourceCode] = useState("");
   const [checkFile, setCheckFile] = useState("print_tokens.c");
@@ -86,7 +71,7 @@ function SourceCodeChart({
     let fileName = data.key.split("/");
     fileName = fileName[fileName.length - 1];
     if (data.key !== "") {
-      setCheckFile(checkFile);
+      setCheckFile(fileName);
     }
   };
 
@@ -190,8 +175,16 @@ function SourceCodeChart({
   // 异步更新视图---------------------------------------------------
   useEffect(() => {
     changeLineInfoTick();
-  }, [firstTestRunCode, secondTestRunCode, cursorLine, lineDoubtData, sourceCode, cursorOverLine]);
+  }, [
+    firstTestRunCode,
+    secondTestRunCode,
+    cursorLine,
+    lineDoubtData,
+    sourceCode,
+    cursorOverLine,
+  ]);
   const [lineInfoTick, setLineInfoTick] = useState(0);
+
   const changeLineInfoTick = useCallback(() => {
     let data = lineInfoTick + 1;
     if (data > 100) {
@@ -201,7 +194,9 @@ function SourceCodeChart({
   }, [lineInfoTick]);
 
   useEffect(() => {
-    editorChange();
+    setTimeout(() => {
+      editorChange();
+    }, 10);
   }, [lineInfoTick]);
 
   // 视图修改
@@ -381,7 +376,7 @@ function SourceCodeChart({
       dataZoom: {
         type: "inside",
         start: 0,
-        end: 10,
+        end: 50,
       },
       yAxis: {
         type: "value",
@@ -457,7 +452,7 @@ function SourceCodeChart({
       dataZoom: {
         type: "inside",
         start: 0,
-        end: 10,
+        end: 50,
       },
       yAxis: {
         type: "value",
@@ -514,7 +509,7 @@ function SourceCodeChart({
           onSelect={checkFileChange}
         />
         <div className="sourceCode-chart-legend-control">
-          怀疑度方法选择:
+          怀疑度方法:
           <Select
             value={selectDoubtMethod}
             onChange={(data) => {
@@ -538,7 +533,7 @@ function SourceCodeChart({
             type="default"
             size="middle"
             style={{
-              width: 100,
+              width: 80,
               height: 30,
               marginRight: 10,
               marginLeft: 10,
@@ -570,32 +565,26 @@ function SourceCodeChart({
             showSearch
           />
         </div>
-        <svg width={420} height={"100%"}>
+        <svg width={370} height={"100%"}>
           <text x="0" y="20" fontSize="12">
             测试覆盖率
           </text>
           <rect
-            x="65"
-            y="7.5"
-            width="45"
-            height="15"
+            x="60"
+            y="10"
+            width="30"
+            height="10"
             fill="rgb(217, 247, 208)"
           />
-          <text x="140" y="20" fontSize="12">
+          <text x="110" y="20" fontSize="12">
             语句怀疑度
           </text>
-          <rect
-            x="205"
-            y="7.5"
-            width="45"
-            height="15"
-            fill="rgb(250,128,114)"
-          />
-          <text x="280" y="20" fontSize="12">
+          <rect x="170" y="10" width="30" height="10" fill="rgb(250,128,114)" />
+          <text x="220" y="20" fontSize="12">
             执行切片
           </text>
-          <rect x="340" y="7.5" width="80" height="15" fill="#90EE90" />
-          <text x="348" y="20" fontSize="12">
+          <rect x="270" y="10" width="80" height="10" fill="#90EE90" />
+          <text x="278" y="20" fontSize="12">
             code xxx xxx
           </text>
         </svg>

@@ -1,5 +1,5 @@
 // src/app.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FloatButton } from "antd";
 import { PlusCircleTwoTone } from "@ant-design/icons";
 import VariInfoChart from "./variInfo";
@@ -16,13 +16,13 @@ function VariTraceChart({
 }) {
   const [variPageNum, setVariPageNum] = useState([1]);
   const [closeId, setCloseId] = useState(0);
-  const addVariPage = function () {
+  const addVariPage = useCallback(() => {
     if (variPageNum.length >= 3) {
       return;
     }
     variPageNum.push(variPageNum[variPageNum.length - 1] + 1);
     setVariPageNum([...variPageNum]);
-  };
+  }, [variPageNum]);
   const changeCloseId = function (data) {
     setCloseId(data);
   };

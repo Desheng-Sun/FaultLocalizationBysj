@@ -110,11 +110,10 @@ function TestCaseList({
             {showStyle === "chart" && (
               <TestCaseListChart
                 nowVersion={nowUseVersion}
-                changeFirstTest={changeFirstTest}
                 firstTest={firstTest}
-                showStyle={showStyle}
                 testCase={testCase}
                 highlightTestCase={highlightTestCase}
+                changeFirstTest={changeFirstTest}
               />
             )}
             {showStyle === "table" && (

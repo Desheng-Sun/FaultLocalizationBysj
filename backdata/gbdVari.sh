@@ -1,1 +1,1 @@
-gdb --batch --command=E:/code/web/FaultLocalizationBysj/backdata/data/print_tokens1/v0/gdbListVari.gdb
+gdb --batch --command=D:/code/web/fault_localization_bysj/backdata/data/print_tokens1/v0/gdbListVari.gdb

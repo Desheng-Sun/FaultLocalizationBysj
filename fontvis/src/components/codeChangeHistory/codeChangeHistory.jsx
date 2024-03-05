@@ -1,9 +1,8 @@
 // src/app.js
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { getCodeChangeHistory, getNewVersionData } from "../../api/interface";
 import { Select, Button } from "antd";
 import "./codeChangeHistory.css";
-import * as d3 from "d3";
 import ChartHeader from "../chartHeader/chart-header";
 
 function CodeChangeHistoryChart({
@@ -34,6 +33,7 @@ function CodeChangeHistoryChart({
       changeNowCodeVersion(nextVersion);
     });
   }, [nowVersion]);
+
   useEffect(() => {
     getCodeChangeHistory().then((res) => {
       setCodeChangeHistory(res);
@@ -41,61 +41,59 @@ function CodeChangeHistoryChart({
   }, [nowVersion, nowCodeVersion]);
 
   useEffect(() => {
+    console.log(codeChangeHistory)
     if (Object.keys(codeChangeHistory).length > 0) {
       setNowChangeHistory(codeChangeHistory[nowSelectVersion]);
     }
   }, [nowSelectVersion, codeChangeHistory]);
+
+  const optionData = useMemo(()=>{
+    if(Object.keys(codeChangeHistory).length){
+      return Object.keys(codeChangeHistory).map((name) => {
+        return {
+          label: name,
+          value: name,
+        };
+      })
+    }
+    return []
+  }, [codeChangeHistory])
   return (
     <div className="codeChangeHistory-chart" style={{ height: h }}>
       <ChartHeader chartName="代码修改历史" />
       <div className="codeChangeHistory-chart-legend">
-        <svg width={350} height={"100%"}>
+        <svg width={"100%"} height={"100%"}>
           <text x="5" y="20" fontSize="12">
             新增代码
           </text>
           <rect
-            x="65"
-            y="7.5"
+            x="55"
+            y="10"
             width="30"
-            height="15"
+            height="10"
             fill="rgb(217, 247, 208)"
           />
-          <text x="115" y="20" fontSize="12">
+          <text x="105" y="20" fontSize="12">
             删除代码
           </text>
-          <rect
-            x="175"
-            y="7.5"
-            width="30"
-            height="15"
-            fill="rgb(250,128,114)"
-          />
-          <text x="225" y="20" fontSize="12">
+          <rect x="160" y="10" width="30" height="10" fill="rgb(250,128,114)" />
+          <text x="210" y="20" fontSize="12">
             修改代码
           </text>
-          <rect
-            x="285"
-            y="7.5"
-            width="30"
-            height="15"
-            fill="rgb(255,250,205)"
-          />
+          <rect x="265" y="10" width="30" height="10" fill="rgb(255,250,205)" />
         </svg>
       </div>
       <div className="codeChangeHistory-chart-legend">
         <div className="codeChangeHistory-chart-legend-control">
           历史版本:
           <Select
-            value={nowVersion}
-            onChange={(data) => {
-              setNowSelectVersion(data);
+            options={optionData}
+            // value={nowSelectVersion}
+            defaultValue={nowSelectVersion}
+            onChange={(value) => {
+              setNowSelectVersion(value);
             }}
-            options={Object.keys(codeChangeHistory).map((name) => {
-              return {
-                label: name,
-                key: name,
-              };
-            })}
+
             style={{
               width: 100,
               height: 30,
@@ -119,9 +117,31 @@ function CodeChangeHistoryChart({
         </Button>
       </div>
       <div className="codeChangeHistory-chart-historyData">
-        {/* {nowChangeHistory.map((data) => {
-          return <div className={data[0]}>{data[1]}</div>;
-        })} */}
+        {nowChangeHistory.map((lineData) => {
+          return (
+            <div>
+              {lineData.map((lineValue) => {
+                return (
+                  <div className="codeChangeHistory-chart-historyData-lineData">
+                    <div
+                      className={`codeChangeHistory-chart-historyData-lineData ${lineValue[0][1]}`}
+                    >
+                      {lineValue[0][0]}
+                    </div>
+                    <div className="codeChangeHistory-chart-historyData-lineData-linecode">
+                      {lineValue.map((line, index) => {
+                        if (index === 0) {
+                          return <></>;
+                        }
+                        return <span className={line[1]}>{line[0]}</span>;
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

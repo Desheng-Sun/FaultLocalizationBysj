@@ -26,7 +26,7 @@ function VariInfoChart({
       for (let j in i) useData.push(j);
     }
     setVariTraceName(useData);
-  }, [variTraceAll]);
+  }, [variTraceAll, variTraceName.length]);
   const onVariSelect = function (e) {
     if (e.namespace.length > 1) {
       changeChooseVariTraceLine([
@@ -53,6 +53,7 @@ function VariInfoChart({
     deleteVariTraceAll(targetKey);
     changeNowSelectVari(["", 0, ""]);
   };
+
   return (
     <div className="variInfo-chart" style={{ width: w, height: h }}>
       <div className="variInfo-chart-titles">

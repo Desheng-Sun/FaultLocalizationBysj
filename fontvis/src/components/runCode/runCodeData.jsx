@@ -43,7 +43,6 @@ function RunCodeChartText({
   const [nowTestOutputs, setNowTestOutputs] = useState(["true", "", ""]);
   const [levelMax, setLevelMax] = useState(0);
   useEffect(() => {
-    console.log(nowTest, nowVersion, nowCodeVersion);
     if (nowTest !== "") {
       let useVersion = nowVersion;
       if (nowVersion !== nowCodeVersion) {
@@ -83,7 +82,7 @@ function RunCodeChartText({
       }
       getRunCodeLineFuncLevel(nowTest, useVersion).then((res) => {
         changeIsWaitData(false);
-        changeTestRunData(true)
+        changeTestRunData(true);
         setRunCodeFuncLevel(res);
       });
     }
@@ -173,7 +172,11 @@ function RunCodeChartText({
 
   // 改变当前页面的滚动高度，将相关代码展示出来-------------------------------------
   useEffect(() => {
-    if (chooseVariTraceLine[0] === nowTest && nowTest !== "") {
+    if (
+      chooseVariTraceLine[0] === nowTest &&
+      nowTest !== "" &&
+      Object.keys(runCodeData) > 0
+    ) {
       let scrollDiv = document
         .getElementById(`runCode_code${componentId}`)
         .getElementsByClassName("ace_scrollbar-v")[0];
@@ -183,7 +186,7 @@ function RunCodeChartText({
       }
       changeLineInfoTick();
     }
-  }, [chooseVariTraceLine]);
+  }, [chooseVariTraceLine, runCodeData]);
 
   // 异步更新----------------------------------------------------------------------------
   useEffect(() => {
@@ -195,7 +198,7 @@ function RunCodeChartText({
     highlightFunc,
     variTraceAll,
     chooseVariTraceLine,
-    runCodeFuncLevel.length
+    runCodeFuncLevel.length,
   ]);
 
   const [runCodeLineInfoTick, setRunCodeLineInfoTick] = useState(0);
@@ -208,7 +211,9 @@ function RunCodeChartText({
   }, [runCodeLineInfoTick]);
 
   useEffect(() => {
-    editorChange();
+    setTimeout(() => {
+      editorChange();
+    }, 10);
   }, [runCodeLineInfoTick]);
 
   const colorList = d3

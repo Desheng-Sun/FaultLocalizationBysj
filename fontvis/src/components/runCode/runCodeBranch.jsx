@@ -28,7 +28,6 @@ function RunCodeBranch({
     }
     getFunCFG(useVersion).then((res) => {
       let useData = {};
-      console.log(res);
       for (let i in res) {
         let nodes = [];
         let edges = [];
@@ -82,7 +81,6 @@ function RunCodeBranch({
   }, [showFunc, funCFG]);
 
   const funCFGChartSVG = (data) => {
-    console.log(data);
     let g = new dagreD3.graphlib.Graph();
     //设置图
     g.setGraph({
@@ -114,7 +112,7 @@ function RunCodeBranch({
     let svgGroup = chartDiv
       .append("svg")
       .attr("width", chartDiv.style("width"))
-      .attr("viewBox", "0 0 2000 2000");
+      .attr("viewBox", "0 0 1500 1500");
     let svg = d3.select("#runCode-content-branch-chart").select("svg");
     let renderG = svgGroup.append("g");
     let zoom = d3.zoom().on("zoom", function (e) {
@@ -129,7 +127,6 @@ function RunCodeBranch({
   const [firstTestRunFunCFG, setFirstTestRunFunCFG] = useState([]);
   const [secondTestRunFunCFG, setSecondTestRunFunCFG] = useState([]);
   useEffect(() => {
-    console.log(firstTest, firstTestRunData)
     if (firstTest && firstTestRunData) {
       let useVersion = nowVersion;
       if (nowCodeVersion !== nowVersion) {
@@ -158,7 +155,6 @@ function RunCodeBranch({
   // 当前悬浮的函数
   useEffect(() => {
     if (Object.keys(funCFGShowData).length > 0) {
-      console.log(funBranchSkip, firstTestRunFunCFG, secondTestRunFunCFG);
       let firstTestNodes = new Set();
       let firstTestEdges = new Set();
       for (let i of firstTestRunFunCFG) {
@@ -191,21 +187,23 @@ function RunCodeBranch({
       secondTestNodes = Array.from(secondTestNodes);
       secondTestEdges = Array.from(secondTestEdges);
       let useNodes = {};
-      console.log(firstTestNodes, firstTestEdges)
       for (let i of funCFGShowData["nodes"]) {
-        let isInFirstTest = firstTestNodes.includes(i.id);
-        let isInSecondTest = secondTestNodes.includes(i.id);
         let fillTestColor = "#fff";
-        let strokeColor = "#aaa";
-        if (isInFirstTest && isInSecondTest) {
-          fillTestColor = "rgb(255,250,205)";
-          strokeColor = "#000";
-        } else if (isInFirstTest && !isInSecondTest) {
-          fillTestColor = "#90EE90";
-          strokeColor = "#000";
-        } else if (!isInFirstTest && isInSecondTest) {
-          fillTestColor = "#FA8072";
-          strokeColor = "#000";
+        let strokeColor = "#000";
+        if (firstTestNodes.length > 0 || secondTestNodes.length > 0) {
+          strokeColor = "#aaa";
+          let isInFirstTest = firstTestNodes.includes(i.id);
+          let isInSecondTest = secondTestNodes.includes(i.id);
+          if (isInFirstTest && isInSecondTest) {
+            fillTestColor = "rgb(255,250,205)";
+            strokeColor = "#000";
+          } else if (isInFirstTest && !isInSecondTest) {
+            fillTestColor = "#90EE90";
+            strokeColor = "#000";
+          } else if (!isInFirstTest && isInSecondTest) {
+            fillTestColor = "#FA8072";
+            strokeColor = "#000";
+          }
         }
         useNodes[i.id] = `fill:${fillTestColor};stroke:${strokeColor}`;
       }
@@ -213,30 +211,28 @@ function RunCodeBranch({
       let useEdgeLabel = {};
       for (let i of funCFGShowData["edges"]) {
         let nowEdges = i.source + "->" + i.target;
-        let isInFirstTest = firstTestEdges.includes(nowEdges);
-        let isInSecondTest = secondTestEdges.includes(nowEdges);
-        useEdges[nowEdges] = `stroke:${
-          isInFirstTest || isInSecondTest ? "#000" : "#aaa"
-        };fill:#fff;stroke-width:1px;opacity:0.5;`;
+        let useColor = "#000";
+        if (firstTestEdges.length > 0 || secondTestEdges.length > 0) {
+          let isInFirstTest = firstTestEdges.includes(nowEdges);
+          let isInSecondTest = secondTestEdges.includes(nowEdges);
+          useColor = isInFirstTest || isInSecondTest ? "#000" : "#aaa";
+        }
+        useEdges[
+          nowEdges
+        ] = `stroke:${useColor};fill:#fff;stroke-width:1px;opacity:0.5;`;
 
-        useEdgeLabel[nowEdges + ":label"] = `fill:${
-          isInFirstTest || isInSecondTest ? "#000" : "#aaa"
-        };`;
+        useEdgeLabel[nowEdges + ":label"] = `fill:${useColor};`;
       }
       funcInvokeChartChange(useNodes, useEdges, useEdgeLabel);
     }
-  }, [
-    funCFGShowData,
-    firstTestRunFunCFG,
-    secondTestRunFunCFG,
-    funCFGShowData,
-    funBranchSkip,
-  ]);
+  }, [funCFGShowData, firstTestRunFunCFG, secondTestRunFunCFG, funBranchSkip, showFunc]);
 
   const funcInvokeChartChange = function (useNodes, useEdges, useEdgeLabel) {
     let chartSvgG = d3.select("#runCode-content-branch-chart").selectAll("g");
     for (let i of chartSvgG.selectAll(".node")) {
-      d3.select(i).select("rect").attr("style", useNodes[d3.select(i).attr("id")]);
+      d3.select(i)
+        .select("rect")
+        .attr("style", useNodes[d3.select(i).attr("id")]);
     }
     for (let i of chartSvgG.selectAll(".edgePath")) {
       d3.select(i)

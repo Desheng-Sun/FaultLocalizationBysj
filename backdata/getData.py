@@ -3,6 +3,7 @@ import json
 import math
 import subprocess
 from alive_progress import alive_bar
+from bs4 import BeautifulSoup
 from flask_cors import *
 import os
 import re
@@ -599,20 +600,55 @@ def getChangeTestCase():
     beforeCode = f.read()
     f = open(nowPath + nowVersion + "/sourceCode/" + nowFile, "w")
     f.write(nowCode)
-    # d = difflib.HtmlDiff()
-    # htmlcontent = d.make_file( beforeCode.splitlines(keepends=True), nowCode.splitlines(keepends=True))
-    # with open(nowPath + nowVersion + '/codeChangeDiff.html','w') as f:
-    #     f.write(htmlcontent)
+    d = difflib.HtmlDiff()
+    htmlcontent = d.make_file( beforeCode.splitlines(keepends=True), nowCode.splitlines(keepends=True))
+    with open(nowPath + nowVersion + '/codeChangeDiff.html','w') as f:
+        f.write(htmlcontent)
 
-    # f = open(nowPath.rstrip("v") + "codeChangeHistory.json", "r")
-    # nowDiffData = json.load(f)
-    # if "v" + nowVersion not in nowDiffData:
-    #     nowDiffData["v" + nowVersion] = {}
-    # if nowFile not in nowDiffData["v" + nowVersion]:
-    #     nowDiffData["v" + nowVersion][nowFile] = []
-    # f = open(nowPath.rstrip("v") + "codeChangeHistory.json", "w")
-    # f.write(json.dumps(nowDiffData))
-    # f.close()
+    f = open(nowPath + nowVersion + "/codeChangeDiff.html", 'r')
+    Soup = BeautifulSoup(f.read(), "html.parser")
+    line = Soup.select("table.diff > tbody > tr")
+
+    f = open(nowPath + "codeChangeHistory.json", "r", encoding="utf-8")
+    nowDiffData = json.load(f)
+    # 判断每一行是否有对应行，是否被修改
+    for i in line:
+        for j in (i.find_all("td", attrs={"nowrap": "nowrap"})):
+            if(len(j.select("span.diff_sub")) == 0 and len(j.select("span.diff_chg")) == 0 and len(j.select("span.diff_add")) == 0):
+                continue
+            else:
+                nowLine = []
+                lastLine = []
+                lineNum = -1
+                nowLineNum = -1
+                for k in i.select("td"):
+                    nowAttr = k.attrs
+                    if("class" not in nowAttr):
+                        nowAttr["class"] = [""]
+                    if( nowAttr["class"][0] == "diff_header"):
+                        lineNum = str(k.get_text())
+                        nowLineNum += 1
+                        if(nowLineNum == 0):
+                            nowLine.append([lineNum, "nowline"])
+                        else:
+                            lastLine.append([lineNum, "beforeline"])
+                    elif(nowAttr["class"][0] != "diff_next"):
+                        if(nowLineNum == 0):
+                            for l in k.contents:
+                                try:
+                                    nowLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
+                                except:
+                                    nowLine.append([" ".join(str(l).split())])
+                        else:
+                            for l in k.contents:
+                                try:
+                                    lastLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
+                                except:
+                                    lastLine.append([" ".join(str(l).split())])
+                nowDiffData[nowVersion].append([nowLine, lastLine])
+                break
+    f = open(nowPath + "codeChangeHistory.json", "w")
+    f.close()
     getSourceCodeNew(nowVersion)
     getFuncStatic(nowVersion)
     getCodeBranch(nowVersion)
@@ -1027,17 +1063,17 @@ def getNewVersionData():
       mv print_tokens.c.gcov ../../../outputs/v0
       rm print_tokens.exe
     """
-    # allThread = []
-    # for i in range(0, 8):
-    #     allThread.append(Thread(target=createTest, args=(i, nowVersion)))
+    allThread = []
+    for i in range(0, 8):
+        allThread.append(Thread(target=createTest, args=(i, nowVersion)))
 
-    # for i in range(0, 8):
-    #     allThread[i].start()
-    # for i in range(0, 8):
-    #     allThread[i].join()
-    # print("所有线程已完成")
-    # for i in range(0, 8):
-    #     shutil.rmtree(nowPath + nowVersion + "/sourceCode" + str(i))
+    for i in range(0, 8):
+        allThread[i].start()
+    for i in range(0, 8):
+        allThread[i].join()
+    print("所有线程已完成")
+    for i in range(0, 8):
+        shutil.rmtree(nowPath + nowVersion + "/sourceCode" + str(i))
     """
     "0": [
     "right",
