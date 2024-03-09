@@ -1099,52 +1099,51 @@ if __name__ == "__main__":
     for i in range(1,8):
         file = open("./data/" + projectName + str(i) + "/codeChangeHistory.json", "w")
         file.write(json.dumps({"v0": []}))
-    nowPath = os.getcwd().replace("\\", "/") + "/data/print_tokens1/"
-    f = open(nowPath + "v1/codeChangeDiff.html", 'r')
-    Soup = BeautifulSoup(f.read(), "html.parser")
-    line = Soup.select("table.diff > tbody > tr")
+    # nowPath = os.getcwd().replace("\\", "/") + "/data/print_tokens1/"
+    # f = open(nowPath + "v1/codeChangeDiff.html", 'r')
+    # Soup = BeautifulSoup(f.read(), "html.parser")
+    # line = Soup.select("table.diff > tbody > tr")
 
-    f = open(nowPath+ "codeChangeHistory.json", "r", encoding="utf-8")
-    nowDiffData = json.load(f)
-    nowDiffData["v1"] = []
-    # 判断每一行是否有对应行，是否被修改
-    lineMatch = []
-    for i in line:
-        lines = i.select("tr > td.diff_header")
-        for j in (i.find_all("td", attrs={"nowrap": "nowrap"})):
-            if(len(j.select("span.diff_sub")) == 0 and len(j.select("span.diff_chg")) == 0 and len(j.select("span.diff_add")) == 0):
-                continue
-            else:
-                nowLine = []
-                lastLine = []
-                lineNum = -1
-                nowLineNum = -1
-                for k in i.select("td"):
-                    nowAttr = k.attrs
-                    if("class" not in nowAttr):
-                        nowAttr["class"] = [""]
-                    if( nowAttr["class"][0] == "diff_header"):
-                        lineNum = str(k.get_text())
-                        nowLineNum += 1
-                        if(nowLineNum == 0):
-                            nowLine.append([lineNum, "nowline"])
-                        else:
-                            lastLine.append([lineNum, "beforeline"])
-                    elif(nowAttr["class"][0] != "diff_next"):
-                        if(nowLineNum == 0):
-                            for l in k.contents:
-                                try:
-                                    nowLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
-                                except:
-                                    nowLine.append([" ".join(str(l).split())])
-                        else:
-                            for l in k.contents:
-                                try:
-                                    lastLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
-                                except:
-                                    lastLine.append([" ".join(str(l).split())])
-                nowDiffData["v1"].append([nowLine, lastLine])
-                break
-    print(nowDiffData)
-    f = open(nowPath+ "codeChangeHistory.json", "w")
-    f.write(json.dumps(nowDiffData))
+    # f = open(nowPath+ "codeChangeHistory.json", "r", encoding="utf-8")
+    # nowDiffData = json.load(f)
+    # nowDiffData["v1"] = []
+    # # 判断每一行是否有对应行，是否被修改
+    # lineMatch = []
+    # for i in line:
+    #     lines = i.select("tr > td.diff_header")
+    #     for j in (i.find_all("td", attrs={"nowrap": "nowrap"})):
+    #         if(len(j.select("span.diff_sub")) == 0 and len(j.select("span.diff_chg")) == 0 and len(j.select("span.diff_add")) == 0):
+    #             continue
+    #         else:
+    #             nowLine = []
+    #             lastLine = []
+    #             lineNum = -1
+    #             nowLineNum = -1
+    #             for k in i.select("td"):
+    #                 nowAttr = k.attrs
+    #                 if("class" not in nowAttr):
+    #                     nowAttr["class"] = [""]
+    #                 if( nowAttr["class"][0] == "diff_header"):
+    #                     lineNum = str(k.get_text())
+    #                     nowLineNum += 1
+    #                     if(nowLineNum == 0):
+    #                         nowLine.append([lineNum, "nowline"])
+    #                     else:
+    #                         lastLine.append([lineNum, "beforeline"])
+    #                 elif(nowAttr["class"][0] != "diff_next"):
+    #                     if(nowLineNum == 0):
+    #                         for l in k.contents:
+    #                             try:
+    #                                 nowLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
+    #                             except:
+    #                                 nowLine.append([" ".join(str(l).split())])
+    #                     else:
+    #                         for l in k.contents:
+    #                             try:
+    #                                 lastLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
+    #                             except:
+    #                                 lastLine.append([" ".join(str(l).split())])
+    #             nowDiffData["v1"].append([nowLine, lastLine])
+    #             break
+    # f = open(nowPath+ "codeChangeHistory.json", "w")
+    # f.write(json.dumps(nowDiffData))

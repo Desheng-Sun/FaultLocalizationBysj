@@ -151,7 +151,7 @@ function TestCaseListChart({
         ctx.fillStyle = colorFault(Math.sqrt(showData[d][2]));
       }
       if (highlightTestCase.includes(parseInt(showData[d][0]))) {
-        ctx.fillStyle = showData[d][1] == "True" ? "#90EE90" : "#FA8072";
+        ctx.fillStyle = showData[d][1] === "True" ? "#90EE90" : "#FA8072";
         ctx_mouse.strokeStyle = "#333";
         ctx_mouse.strokeRect(
           (d % oneLine) * squareSize,

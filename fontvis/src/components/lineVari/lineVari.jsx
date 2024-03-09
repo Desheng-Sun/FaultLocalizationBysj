@@ -25,7 +25,7 @@ function LineVariChart({ h, w, runCodeChooseLineVari, changeNowSelectVari }) {
   );
   return (
     <div className="lineVari-chart" style={{ height: h, width: w }}>
-      <ChartHeader chartName="代码行对应变量值" />
+      <ChartHeader chartName="代码行变量值" />
       <div className={"lineVari-chart-lineJson"}>
         <ReactJson
           src={runCodeChooseLineVari[2]}

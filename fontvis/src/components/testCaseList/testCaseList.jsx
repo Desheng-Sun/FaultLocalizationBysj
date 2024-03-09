@@ -32,7 +32,7 @@ function TestCaseList({
       style={{ background: "#fff", height: "100%", width: w }}
       className="testCaseList"
     >
-      <ChartHeader chartName="测试用例列表" />
+      <ChartHeader chartName="测试用例信息概览" />
       <div className="testCaseList-legend">
         <PieChartOutlined
           onClick={() => {

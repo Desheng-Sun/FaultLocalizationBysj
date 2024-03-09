@@ -58,7 +58,7 @@ function VariTraceChart({
 
   return (
     <div className="variTrace-chart" style={{ width: w, height: h }}>
-      <ChartHeader chartName="单变量跟踪" />
+      <ChartHeader chartName="变量追踪" />
       <FloatButton
         shape="circle"
         type="default"
