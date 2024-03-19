@@ -41,23 +41,23 @@ function CodeChangeHistoryChart({
   }, [nowVersion, nowCodeVersion]);
 
   useEffect(() => {
-    console.log(codeChangeHistory)
+    console.log(codeChangeHistory);
     if (Object.keys(codeChangeHistory).length > 0) {
       setNowChangeHistory(codeChangeHistory[nowSelectVersion]);
     }
   }, [nowSelectVersion, codeChangeHistory]);
 
-  const optionData = useMemo(()=>{
-    if(Object.keys(codeChangeHistory).length){
+  const optionData = useMemo(() => {
+    if (Object.keys(codeChangeHistory).length) {
       return Object.keys(codeChangeHistory).map((name) => {
         return {
           label: name,
           value: name,
         };
-      })
+      });
     }
-    return []
-  }, [codeChangeHistory])
+    return [];
+  }, [codeChangeHistory]);
   return (
     <div className="codeChangeHistory-chart" style={{ height: h }}>
       <ChartHeader chartName="代码修改历史" />
@@ -88,12 +88,11 @@ function CodeChangeHistoryChart({
           历史版本:
           <Select
             options={optionData}
-            // value={nowSelectVersion}
+            value={nowSelectVersion}
             defaultValue={nowSelectVersion}
             onChange={(value) => {
               setNowSelectVersion(value);
             }}
-
             style={{
               width: 100,
               height: 30,
@@ -119,7 +118,7 @@ function CodeChangeHistoryChart({
       <div className="codeChangeHistory-chart-historyData">
         {nowChangeHistory.map((lineData) => {
           return (
-            <div>
+            <div className="codeChangeHistory-chart-historyData-lineChange">
               {lineData.map((lineValue) => {
                 return (
                   <div className="codeChangeHistory-chart-historyData-lineData">

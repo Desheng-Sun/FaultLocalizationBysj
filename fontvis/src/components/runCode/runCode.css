@@ -40,20 +40,23 @@
 }
 
 .runCode-chart-text-result{
-  height: 50px;
+  height: 40px;
   display: flex;
   flex-direction: row;
   line-height: 20px;
 }
 
 .runCode-chart-text-result-isTrue {
-  width: 50px;
-  line-height: 50px;
+  width: 100px;
+  line-height: 40px;
 }
 .runCode-chart-text-result-result {
   flex: 1;
   background-color: rgb(246, 246, 246);
   overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 
@@ -95,6 +98,7 @@
 
 .runCode-chart-text-chart-codeLineInfo-variTrace{
   max-width: 130px;
+  background-color: rgb(253,253,253);
   overflow-x: auto;
   overflow-y: hidden ;
   position: relative;

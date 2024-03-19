@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Table } from "antd";
 import "./testCaseList.css";
-import * as d3 from "d3";
 
 function TestCaseListTable({
   nowVersion,
@@ -132,7 +131,7 @@ function TestCaseListTable({
     <Table
       dataSource={useTestCase}
       columns={column}
-      scroll={{ y: 450 }}
+      scroll={{ y: 400 }}
       size="small"
     />
   );

@@ -17,27 +17,32 @@ function VariTraceChart({
   const [variPageNum, setVariPageNum] = useState([1]);
   const [closeId, setCloseId] = useState(0);
   const addVariPage = useCallback(() => {
+    console.log(variPageNum);
     if (variPageNum.length >= 3) {
       return;
     }
     variPageNum.push(variPageNum[variPageNum.length - 1] + 1);
+    console.log(variPageNum);
     setVariPageNum([...variPageNum]);
   }, [variPageNum]);
   const changeCloseId = function (data) {
     setCloseId(data);
   };
   useEffect(() => {
-    let useData = [];
-    // 在父元素中删除对应的追踪页面
-    if (variPageNum.length <= 1) {
-      return;
-    }
-    for (let i of variPageNum) {
-      if (i !== closeId) {
-        useData.push(i);
+    if (closeId !== 0) {
+      let useData = [];
+      // 在父元素中删除对应的追踪页面
+      if (variPageNum.length <= 1) {
+        return;
       }
+      for (let i of variPageNum) {
+        if (i !== closeId) {
+          useData.push(i);
+        }
+      }
+      setVariPageNum(useData);
+      setCloseId(0);
     }
-    setVariPageNum(useData);
   }, [closeId, variPageNum]);
 
   const deleteVariTraceAll = function (data) {

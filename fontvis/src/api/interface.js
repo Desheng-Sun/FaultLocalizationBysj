@@ -1,5 +1,15 @@
 import { get, post } from './http.js';
 
+
+// 获取当前使用的版本
+export const getUseVersion = () => {
+  return get('getUseVersion');
+};
+
+export const changeUseVersion = (nowVersion, nowCodeVersion) => {
+  return post('changeUseVersion', {nowVersion, nowCodeVersion});
+};
+
 // 获取所有的测试用例
 export const getAllTestCase = () => {
   return get('getAllTestCase');

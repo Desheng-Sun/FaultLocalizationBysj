@@ -49,15 +49,29 @@ function RunCodeChartText({
         useVersion = nowCodeVersion;
       }
       changeIsWaitData(true);
-      getTestRunCode(nowTest, useVersion).then((res) => {
-        setRunCodeData(res);
-        let useData = new Set();
-        for (let i of res["line"]) {
-          useData.add(i);
-        }
-        changeTestRunCode(Array.from(useData));
-        setLevelMax(Math.max(...res["level"]));
-      });
+      changeTestRunData(false);
+      getTestRunCode(nowTest, useVersion)
+        .then((res) => {
+          setRunCodeData(res);
+          let useData = new Set();
+          for (let i of res["line"]) {
+            useData.add(i);
+          }
+          changeTestRunCode(Array.from(useData));
+          setLevelMax(Math.max(...res["level"]));
+          let useRunCode = "";
+          for (let i in res["code"]) {
+            useRunCode += res["spaceLen"][i] + res["code"][i];
+          }
+          setRunCode(useRunCode);
+        })
+        .then(() => {
+          getRunCodeLineFuncLevel(nowTest, useVersion).then((res) => {
+            changeIsWaitData(false);
+            changeTestRunData(true);
+            setRunCodeFuncLevel(res);
+          });
+        });
       getTestOutput(nowTest, useVersion).then((res) => {
         setNowTestOutputs(res);
       });
@@ -68,25 +82,6 @@ function RunCodeChartText({
   const [runCode, setRunCode] = useState("");
   // 当前的代码调用层级信息
   const [runCodeFuncLevel, setRunCodeFuncLevel] = useState([]);
-
-  useEffect(() => {
-    if (Object.keys(runCodeData).length > 0 && nowTest) {
-      let useRunCode = "";
-      for (let i in runCodeData["code"]) {
-        useRunCode += runCodeData["spaceLen"][i] + runCodeData["code"][i];
-      }
-      setRunCode(useRunCode);
-      let useVersion = nowVersion;
-      if (nowVersion !== nowCodeVersion) {
-        useVersion = nowCodeVersion;
-      }
-      getRunCodeLineFuncLevel(nowTest, useVersion).then((res) => {
-        changeIsWaitData(false);
-        changeTestRunData(true);
-        setRunCodeFuncLevel(res);
-      });
-    }
-  }, [runCodeData, nowTest, nowVersion]);
 
   // 当前鼠标光标改变位置
   const [nowCursorLine, setNowCursorLine] = useState(0);
@@ -113,7 +108,7 @@ function RunCodeChartText({
       nowSelectVari[0] === nowTest &&
       nowSelectVari[1] === nowCursorLine
     ) {
-      let nowIdInfo = runCodeData["lineId"][nowCursorLine];
+      let nowIdInfo = runCodeData["lineId"][nowCursorLine - 1];
       for (let i of variTraceAll) {
         if (i[nowTest + ": " + nowIdInfo["id"] + ": " + nowSelectVari[2]]) {
           return;
@@ -515,11 +510,17 @@ function RunCodeChartText({
             >
               {nowTestOutputs[0] === "true" ? "正确" : "错误"}
             </div>
-            <div className="runCode-chart-text-result-result">
-              {nowTestOutputs[1]}
+            <div
+              className="runCode-chart-text-result-result"
+              style={{ backgroundColor: "rgb(230, 230, 230)" }}
+            >
+              <div>{nowTestOutputs[2]}</div>
             </div>
-            <div className="runCode-chart-text-result-result">
-              {nowTestOutputs[2]}
+            <div
+              className="runCode-chart-text-result-result"
+              style={{ backgroundColor: "#90EE90" }}
+            >
+              <div>{nowTestOutputs[1]}</div>
             </div>
           </div>
           <div className="runCode-chart-text-chart">

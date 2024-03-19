@@ -108,7 +108,8 @@ function FuncInvokeChart({
   const [firstTestRunFunc, setFirstTestRunFunc] = useState([]);
   const [secondTestRunFunc, setSecondTestRunFunc] = useState([]);
   useEffect(() => {
-    if (firstTest && firstTestRunData) {
+    if (firstTest !== "" && firstTestRunData) {
+      console.log(firstTest, firstTestRunData);
       let useVersion = nowVersion;
       if (nowCodeVersion !== nowVersion) {
         useVersion = nowCodeVersion;
@@ -120,7 +121,7 @@ function FuncInvokeChart({
   }, [firstTest, firstTestRunData, nowVersion, nowCodeVersion]);
 
   useEffect(() => {
-    if (secondTest && secondTestRunData) {
+    if (secondTest !== "" && secondTestRunData) {
       let useVersion = nowVersion;
       if (nowCodeVersion !== nowVersion) {
         useVersion = nowCodeVersion;

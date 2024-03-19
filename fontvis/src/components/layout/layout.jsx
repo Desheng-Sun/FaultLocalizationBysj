@@ -9,11 +9,12 @@ import TestCaseList from "../testCaseList/testCaseList";
 import VariTraceChart from "../variTrace/variTrace";
 import "./layout.css";
 import { useState, useEffect } from "react";
+import { getUseVersion, changeUseVersion } from "../../api/interface";
 
 export default function Layout() {
   // 各个视图的实际高度
   const [testCaseListWidth, setTestCaseListWidth] = useState(0);
-  const [codeChangeHistoryHeight, setCodeChangeHistory] = useState(0);
+  const [codeChangeHistoryHeight, setCodeChangeHistoryHeight] = useState(0);
   const [sourceCodeHeight, setSourceCodeHeight] = useState(0);
   const [funcInvokeiHeight, setFuncInvokeiHeight] = useState(0);
   const [runCodeHeight, setRunCodeHeight] = useState(0);
@@ -25,8 +26,8 @@ export default function Layout() {
     setTestCaseListWidth(
       document.getElementById("testList").getBoundingClientRect().width
     );
-    setCodeChangeHistory(
-      document.getElementById("changeHistory").getBoundingClientRect().width
+    setCodeChangeHistoryHeight(
+      document.getElementById("changeHistory").getBoundingClientRect().height
     );
     setSourceCodeHeight(
       document.getElementById("sourceCode").getBoundingClientRect().height
@@ -55,11 +56,20 @@ export default function Layout() {
   const [nowVersion, setNowVersion] = useState("v0");
   const changeNowVersion = function (data) {
     setNowVersion(data);
+    changeUseVersion(data, nowCodeVersion);
   };
   const [nowCodeVersion, setNowCodeVersion] = useState("v0");
   const changeNowCodeVersion = function (data) {
     setNowCodeVersion(data);
+    changeUseVersion(nowVersion, data);
   };
+
+  useEffect(() => {
+    getUseVersion().then((res) => {
+      setNowVersion(res["nowVersion"]);
+      setNowCodeVersion(res["nowCodeVersion"]);
+    });
+  }, []);
   const [isWaitData, setIsWaitData] = useState(false);
   const changeIsWaitData = function (data) {
     setIsWaitData(data);
@@ -72,11 +82,13 @@ export default function Layout() {
   // 首要选择的测试用
   const [firstTest, setFirstTest] = useState("");
   const changeFirstTest = function (data) {
+    setFirstTestRunData(false);
     setFirstTest(data);
   };
   // 进行对比的测试用例
   const [secondTest, setSecondTest] = useState("");
   const changeSecondTest = function (data) {
+    setSecondTestRunData(false);
     setSecondTest(data);
   };
   // 当前筛选的测试用例
@@ -216,6 +228,8 @@ export default function Layout() {
               changeHighlightFunc={changeHighlightFunc}
               changeNowCodeVersion={changeNowCodeVersion}
               changeSourceCodeCursorLine={changeSourceCodeCursorLine}
+              changeFirstTestRunData={changeFirstTestRunData}
+              changeSecondTestRunData={changeSecondTestRunData}
             />
           </div>
           <div id="funcInvoke">

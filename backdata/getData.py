@@ -19,7 +19,24 @@ CORS(app, supports_credentials=True, resources=r"/*")
 
 # # 保存所有软件测试用例
 
-nowPath = os.getcwd().replace("\\", "/") + "/data/print_tokens1/"
+nowPath = os.getcwd().replace("\\", "/") + "/data/print_tokens-1/"
+
+
+# 获取当前使用的版本----------------------------------------------------------------------------
+@app.route("/getUseVersion", methods=["GET"])
+def getUseVersion():
+    file = open(nowPath + "useVersion.json", "r", encoding="utf-8")
+    data = json.load(file)
+    return data
+
+
+@app.route("/changeUseVersion", methods=["POST"])
+def changeUseVersion():
+    nowVersion = request.json.get("nowVersion")  # 获取所有参数
+    nowCodeVersion = str(request.json.get("nowCodeVersion"))  # 获取所有参数
+    file = open(nowPath + "useVersion.json", "w", encoding="utf-8")
+    file.write(json.dumps({"nowVersion": nowVersion, "nowCodeVersion": nowCodeVersion}))
+    return []
 
 
 # 获取所有的测试用例----------------------------------------------------------------------------
@@ -115,7 +132,7 @@ def getTestRunCode():
     testCaseNum = int(request.json.get("testCaseNum"))  # 获取所有参数
     nowVersion = str(request.json.get("nowVersion"))  # 获取所有参数
     useTestCase = getAllUseTestCase()
-    if os.path.exists(nowPath + nowVersion + "/runTime.json"):
+    if os.path.exists(nowPath + "/runTime.json"):
         if os.path.exists(nowPath + nowVersion + "/" + str(testCaseNum) + "info.json"):
             f = open(
                 nowPath + nowVersion + "/" + str(testCaseNum) + "info.json",
@@ -542,7 +559,7 @@ def getTestOutput():
     rightOutputs = open(nowDir + "/data/print_tokens0/resultData.json", "r")
     rightResult = json.load(rightOutputs)
 
-    if not os.path.exists(nowPath + nowVersion + "/runTime.json"):
+    if not os.path.exists(nowPath + nowVersion + "/outputs/t" + testCaseNum):
         os.system(
             "cd "
             + nowPath
@@ -551,14 +568,14 @@ def getTestOutput():
             + " && gcc print_tokens.c -g -o print_tokens.exe"
         )
         buff = []
-        file_name = "./data/print_tokensscripts/runall.sh"
+        file_name = "./data/print_tokens/scripts/runall.sh"
         # 打开原来的runall.ps1文件，并把所有语句进行记录保存
         with open(file_name) as file_obj:
             for content in file_obj:
                 if "print_tokens.exe" in content:
                     content = content.replace("../source/", "./")
                     content = content.replace(
-                        "../inputs/", "../../../print_tokensinputs/"
+                        "../inputs/", "../../../print_tokens/inputs/"
                     )
                     buff.append(content)
         nowShList = open(nowPath + nowVersion + "/nowTest.sh", "w")
@@ -583,7 +600,7 @@ def getTestOutput():
 
 # 获取新更改的代码--------------------------------------------------------------------------------
 @app.route("/getNewVersionCode", methods=["POST"])
-def getChangeTestCase():
+def getNewVersionCode():
     nowVersion = str(request.json.get("nowVersion"))
     nowFile = request.json.get("nowFile")
     nowCode = request.json.get("nowCode")
@@ -596,25 +613,32 @@ def getChangeTestCase():
         shutil.copytree(source_path, target_path)
         os.mkdir(nowPath + nowVersion + "/outputs")
 
-    f = open(nowPath + nowVersion + "/sourceCode/" + nowFile, "r")
+    f = open(nowPath + lastVersion + "/sourceCode/" + nowFile, "r")
     beforeCode = f.read()
     f = open(nowPath + nowVersion + "/sourceCode/" + nowFile, "w")
     f.write(nowCode)
     d = difflib.HtmlDiff()
-    htmlcontent = d.make_file( beforeCode.splitlines(keepends=True), nowCode.splitlines(keepends=True))
-    with open(nowPath + nowVersion + '/codeChangeDiff.html','w') as f:
+    htmlcontent = d.make_file(
+        beforeCode.splitlines(keepends=True), nowCode.splitlines(keepends=True)
+    )
+    with open(nowPath + nowVersion + "/codeChangeDiff.html", "w") as f:
         f.write(htmlcontent)
 
-    f = open(nowPath + nowVersion + "/codeChangeDiff.html", 'r')
+    f = open(nowPath + nowVersion + "/codeChangeDiff.html", "r")
     Soup = BeautifulSoup(f.read(), "html.parser")
     line = Soup.select("table.diff > tbody > tr")
 
     f = open(nowPath + "codeChangeHistory.json", "r", encoding="utf-8")
     nowDiffData = json.load(f)
+    nowDiffData[nowVersion] = []
     # 判断每一行是否有对应行，是否被修改
     for i in line:
-        for j in (i.find_all("td", attrs={"nowrap": "nowrap"})):
-            if(len(j.select("span.diff_sub")) == 0 and len(j.select("span.diff_chg")) == 0 and len(j.select("span.diff_add")) == 0):
+        for j in i.find_all("td", attrs={"nowrap": "nowrap"}):
+            if (
+                len(j.select("span.diff_sub")) == 0
+                and len(j.select("span.diff_chg")) == 0
+                and len(j.select("span.diff_add")) == 0
+            ):
                 continue
             else:
                 nowLine = []
@@ -623,31 +647,42 @@ def getChangeTestCase():
                 nowLineNum = -1
                 for k in i.select("td"):
                     nowAttr = k.attrs
-                    if("class" not in nowAttr):
+                    if "class" not in nowAttr:
                         nowAttr["class"] = [""]
-                    if( nowAttr["class"][0] == "diff_header"):
+                    if nowAttr["class"][0] == "diff_header":
                         lineNum = str(k.get_text())
                         nowLineNum += 1
-                        if(nowLineNum == 0):
+                        if nowLineNum == 0:
                             nowLine.append([lineNum, "nowline"])
                         else:
                             lastLine.append([lineNum, "beforeline"])
-                    elif(nowAttr["class"][0] != "diff_next"):
-                        if(nowLineNum == 0):
+                    elif nowAttr["class"][0] != "diff_next":
+                        if nowLineNum == 0:
                             for l in k.contents:
                                 try:
-                                    nowLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
+                                    nowLine.append(
+                                        [
+                                            " ".join(str(l.text).split()),
+                                            l.attrs["class"][0],
+                                        ]
+                                    )
                                 except:
                                     nowLine.append([" ".join(str(l).split())])
                         else:
                             for l in k.contents:
                                 try:
-                                    lastLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
+                                    lastLine.append(
+                                        [
+                                            " ".join(str(l.text).split()),
+                                            l.attrs["class"][0],
+                                        ]
+                                    )
                                 except:
                                     lastLine.append([" ".join(str(l).split())])
                 nowDiffData[nowVersion].append([nowLine, lastLine])
                 break
     f = open(nowPath + "codeChangeHistory.json", "w")
+    f.write(json.dumps(nowDiffData))
     f.close()
     getSourceCodeNew(nowVersion)
     getFuncStatic(nowVersion)
@@ -727,7 +762,7 @@ def getFuncStatic(nowVersion):
     )
     file_obj.write("cd " + nowPath + nowVersion + "/sourceCode\n")
 
-    file_obj.write(allUsetTest[0])
+    file_obj.write(allUsetTest[0] + "\n")
     file_obj.write("gcov print_tokens.c\n")
     file_obj.write("mv print_tokens.c.gcov ../outputs\n")
     file_obj.write("rm print_tokens.exe\n")
@@ -1201,58 +1236,54 @@ def getRunTime(nowVersion):
     for j in range(0, 8):
         timeMatrix.append([])
     for j in range(0, 4130):
-            nowThread = j % 8
-            # 取出相应测试用例的的执行频谱
-            file_correct = open(
-                nowPath
-                + nowVersion
-                + "/outputs/t"
-                + str(j + 1)
-                + "_print_tokens.c.gcov",
-                mode="r",
-            )
-            # 将变异版本的测试用例的结果取出
-            file_test = open(
-                nowPath + nowVersion + "/outputs/t" + str(j + 1),
-                mode="r",
-            )
-            test = file_test.read()
-            runTimeNow = 0
-            nowTestResult = rightResult[str(j + 1)] == test
-            nowLine = 1
-            for content in file_correct:
-                if content.split(":", 1)[1].strip().startswith("0:"):
-                    continue
-                if nowLine not in resultMatrix:
-                    for k in range(0, 8):
-                        timeMatrix[k].append(0)
-                    resultMatrix[nowLine] = []
-                    lineTestMatrix[nowLine] = []
-                content = content.split(":", 1)[0]
-                if not "-" in content and not "#####" in content:
-                    nowLineData = int(content) - timeMatrix[nowThread][nowLine - 1]
-                    runTimeNow += nowLineData
-                    timeMatrix[nowThread][nowLine - 1] = int(content)
-                    if nowLineData > 0:
-                        lineTestMatrix[nowLine].append(j + 1)
-                        if nowTestResult:
-                            resultMatrix[nowLine].append(1)
-                        else:
-                            resultMatrix[nowLine].append(3)
+        nowThread = j % 8
+        # 取出相应测试用例的的执行频谱
+        file_correct = open(
+            nowPath + nowVersion + "/outputs/t" + str(j + 1) + "_print_tokens.c.gcov",
+            mode="r",
+        )
+        # 将变异版本的测试用例的结果取出
+        file_test = open(
+            nowPath + nowVersion + "/outputs/t" + str(j + 1),
+            mode="r",
+        )
+        test = file_test.read()
+        runTimeNow = 0
+        nowTestResult = rightResult[str(j + 1)] == test
+        nowLine = 1
+        for content in file_correct:
+            if content.split(":", 1)[1].strip().startswith("0:"):
+                continue
+            if nowLine not in resultMatrix:
+                for k in range(0, 8):
+                    timeMatrix[k].append(0)
+                resultMatrix[nowLine] = []
+                lineTestMatrix[nowLine] = []
+            content = content.split(":", 1)[0]
+            if not "-" in content and not "#####" in content:
+                nowLineData = int(content) - timeMatrix[nowThread][nowLine - 1]
+                runTimeNow += nowLineData
+                timeMatrix[nowThread][nowLine - 1] = int(content)
+                if nowLineData > 0:
+                    lineTestMatrix[nowLine].append(j + 1)
+                    if nowTestResult:
+                        resultMatrix[nowLine].append(1)
                     else:
-                        if nowTestResult:
-                            resultMatrix[nowLine].append(0)
-                        else:
-                            resultMatrix[nowLine].append(2)
+                        resultMatrix[nowLine].append(3)
                 else:
                     if nowTestResult:
                         resultMatrix[nowLine].append(0)
                     else:
                         resultMatrix[nowLine].append(2)
-                nowLine += 1
+            else:
+                if nowTestResult:
+                    resultMatrix[nowLine].append(0)
+                else:
+                    resultMatrix[nowLine].append(2)
+            nowLine += 1
 
-            # 判断结果是否相同
-            result[str(j + 1)][nowVersion] = [str(nowTestResult), runTimeNow, test]
+        # 判断结果是否相同
+        result[str(j + 1)][nowVersion] = [str(nowTestResult), runTimeNow, test]
     file = open(nowPath + "runTime.json", mode="w")  # 代码执行次数
     file.write(json.dumps(result))
 

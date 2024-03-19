@@ -68,7 +68,7 @@ function RunCodeChart({
           className="runCode-icon"
         />
         <div className="runCode-chart-legend-legend">
-          <svg width={230} height={"100%"}>
+          <svg width={500} height={"100%"}>
             <defs>
               <linearGradient id="GradientFuncLevel">
                 <stop offset="0%" stopColor="white" />
@@ -79,29 +79,52 @@ function RunCodeChart({
               代码函数层级
             </text>
             <rect
-              x="75"
+              x="70"
               y="7.5"
-              width="45"
+              width="40"
               height="15"
               fill="url(#GradientFuncLevel)"
             />
-            <text x="140" y="20" fontSize="12">
+            <text x="130" y="20" fontSize="12">
               变量追踪
             </text>
             <rect
-              x="200"
+              x="180"
               y="7.5"
               width="7.5"
               height="15"
               fill="rgb(250,128,114)"
             />
             <rect
-              x="207.5"
+              x="187.5"
               y="7.5"
               width="7.5"
               height="15"
               fill="rgb(217, 247, 208)"
             />
+            <text x="215" y="20" fontSize="12">
+              实际输出
+            </text>
+            <rect
+              x="265"
+              y="7.5"
+              width="32.5"
+              height="15"
+              fill="rgb(230, 230, 230)"
+            />
+            <rect
+              x="297.5"
+              y="7.5"
+              width="32.5"
+              height="15"
+              fill="#90EE90"
+            />
+            <text x="272.5" y="20" fontSize="12">
+              result xxx
+            </text>
+            <text x="335" y="20" fontSize="12">
+              预期输出
+            </text>
           </svg>
         </div>
       </div>

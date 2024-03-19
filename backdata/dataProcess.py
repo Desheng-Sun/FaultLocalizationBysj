@@ -17,7 +17,7 @@ projectName = "print_tokens"
 # 对项目目录结构进行重构
 def changeFileItem():
     # 将其他几个版本的文件提取出来
-    for i in range(0, 8):
+    for i in range(-1, 0):
         source_path = os.path.abspath(
             "./data/" + projectName + "/versions.alt/versions.orig/v" + str(i)
         )
@@ -82,7 +82,7 @@ def getSourceCode():
                 )
         return DirTree
 
-    for i in range(0, 8):
+    for i in range(-1, 0):
         dirTree = retrieveDir(
             nowPath + "/data/" + projectName + str(i) + "/v0/sourceCode"
         )
@@ -96,7 +96,7 @@ def getSourceCode():
 # 创建测试用例的相关脚本
 def createV(buff):
     # 为8个版本分别创建测试用例的相关脚本
-    for i in range(0, 8):
+    for i in range(-1, 0):
         if not os.path.exists("./data/" + projectName + str(i) + "/v0/outputs"):
             os.mkdir("./data/" + projectName + str(i) + "/v0/outputs")
         fileList = []
@@ -133,7 +133,7 @@ def createV(buff):
 # 创建获取执行过程的相关脚本
 def createAllV(buff):
     # 为所有版本创建获取执行过程的相关脚本
-    for i in range(0, 8):
+    for i in range(-1, 0):
         fileList = []
         file = open(
             "./data/" + projectName + str(i) + "/v0/sourceCode/runall_gcov.sh",
@@ -185,7 +185,7 @@ def createAllV(buff):
 def createTest(threadNum):
     print("第" + str(threadNum) + "个线程已开始")
     nowPath = os.getcwd().replace("\\", "/")
-    for i in range(0, 8):
+    for i in range(-1, 0):
         file_obj = open(
             "./data/"
             + projectName
@@ -239,7 +239,7 @@ def getRunTime():
         rightResult[i + 1] = file_correct.read()
     file_correct = open("./data/" + projectName + "0/resultData.json", "w")
     file_correct.write(json.dumps(rightResult))
-    for i in range(1, 8):
+    for i in range(-1, 0):
         result = {}
         resultMatrix = {}
         lineTestMatrix = {}
@@ -333,7 +333,7 @@ def getRunTime():
 # 获取代码逻辑内的函数调用关系
 def getFuncStatic():
     nowPath = os.getcwd().replace("\\", "/")
-    for i in range(1, 8):
+    for i in range(-1, 0):
         os.system(
             "cd "
             + nowPath
@@ -484,7 +484,7 @@ def getCodeBranch():
     """
 
     nowPath = os.getcwd().replace("\\", "/")
-    for i in range(1, 8):
+    for i in range(-1, 0):
         # 获取代码的CFG文件并进行解析
         file_obj = open(
             "./data/" + projectName + str(i) + "/v0/sourceCode/runcfg.sh",
@@ -658,7 +658,7 @@ def getCodeBranch():
 def getDiffFromVersion():
     file_1 = open("./data/" + projectName + "0/v0/sourceCode/print_tokens.c", "r")
     a = file_1.read().splitlines()
-    for i in range(1, 8):
+    for i in range(-1, 0):
         file_2 = open(
             "./data/" + projectName + str(i) + "/v0/sourceCode/print_tokens.c", "r"
         )
@@ -1031,7 +1031,7 @@ def getRunCodeBranchSkip():
 
 if __name__ == "__main__":
 
-    # 对项目目录结构进行重构
+    # # 对项目目录结构进行重构
     # changeFileItem()
     # 获取项目的源代码
     # getSourceCode()
@@ -1080,7 +1080,7 @@ if __name__ == "__main__":
     # for i in range(0, 8):
     #     allThread[i].join()
     # print("所有线程已完成")
-    # for i in range(0, 8):
+    # for i in range(-1, 0):
     #     for j in range(0, 8):
     #         shutil.rmtree("./data/" + projectName + str(i) + "/v0/sourceCode" + str(j))
     """
@@ -1096,54 +1096,9 @@ if __name__ == "__main__":
     # getDiffFromVersion()
 
     # getRunCodeBranchSkip()
-    for i in range(1,8):
-        file = open("./data/" + projectName + str(i) + "/codeChangeHistory.json", "w")
-        file.write(json.dumps({"v0": []}))
-    # nowPath = os.getcwd().replace("\\", "/") + "/data/print_tokens1/"
-    # f = open(nowPath + "v1/codeChangeDiff.html", 'r')
-    # Soup = BeautifulSoup(f.read(), "html.parser")
-    # line = Soup.select("table.diff > tbody > tr")
-
-    # f = open(nowPath+ "codeChangeHistory.json", "r", encoding="utf-8")
-    # nowDiffData = json.load(f)
-    # nowDiffData["v1"] = []
-    # # 判断每一行是否有对应行，是否被修改
-    # lineMatch = []
-    # for i in line:
-    #     lines = i.select("tr > td.diff_header")
-    #     for j in (i.find_all("td", attrs={"nowrap": "nowrap"})):
-    #         if(len(j.select("span.diff_sub")) == 0 and len(j.select("span.diff_chg")) == 0 and len(j.select("span.diff_add")) == 0):
-    #             continue
-    #         else:
-    #             nowLine = []
-    #             lastLine = []
-    #             lineNum = -1
-    #             nowLineNum = -1
-    #             for k in i.select("td"):
-    #                 nowAttr = k.attrs
-    #                 if("class" not in nowAttr):
-    #                     nowAttr["class"] = [""]
-    #                 if( nowAttr["class"][0] == "diff_header"):
-    #                     lineNum = str(k.get_text())
-    #                     nowLineNum += 1
-    #                     if(nowLineNum == 0):
-    #                         nowLine.append([lineNum, "nowline"])
-    #                     else:
-    #                         lastLine.append([lineNum, "beforeline"])
-    #                 elif(nowAttr["class"][0] != "diff_next"):
-    #                     if(nowLineNum == 0):
-    #                         for l in k.contents:
-    #                             try:
-    #                                 nowLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
-    #                             except:
-    #                                 nowLine.append([" ".join(str(l).split())])
-    #                     else:
-    #                         for l in k.contents:
-    #                             try:
-    #                                 lastLine.append([" ".join(str(l.text).split()), l.attrs["class"][0]])
-    #                             except:
-    #                                 lastLine.append([" ".join(str(l).split())])
-    #             nowDiffData["v1"].append([nowLine, lastLine])
-    #             break
-    # f = open(nowPath+ "codeChangeHistory.json", "w")
-    # f.write(json.dumps(nowDiffData))
+    # for i in range(-1, 0):
+    #     file = open("./data/" + projectName + str(i) + "/codeChangeHistory.json", "w")
+    #     file.write(json.dumps({"v0": []}))
+    for i in range(-1, 0):
+        file = open("./data/" + projectName + str(i) + "/useVersion.json", "w")
+        file.write(json.dumps({"nowVersion": "v0", "nowCodeVersion": "v0"}))

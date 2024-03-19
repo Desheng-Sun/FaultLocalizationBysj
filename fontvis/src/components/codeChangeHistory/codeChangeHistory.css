@@ -29,17 +29,23 @@
   overflow: auto;
   flex-direction: column;
 }
+.codeChangeHistory-chart-historyData-lineChange {
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgb(210, 210, 210);
+}
 .codeChangeHistory-chart-historyData-lineData {
   display: flex;
-
+  min-height: 20px;
+  line-height: 20px;
   .nowline {
     background-color: #90ee90;
+    width: 50px;
   }
   .beforeline {
     background-color: #fa8072;
+    width: 50px;
   }
 }
-
 .codeChangeHistory-chart-historyData-lineData-line {
   width: 30px;
 }

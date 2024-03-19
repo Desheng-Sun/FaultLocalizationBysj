@@ -34,6 +34,8 @@ function SourceCodeChart({
   changeHighlightFunc,
   changeNowCodeVersion,
   changeSourceCodeCursorLine,
+  changeFirstTestRunData,
+  changeSecondTestRunData,
 }) {
   // 获取列表数据和每一行所在的测试用例------------------------------------------------
   const [lineTestCase, setLineTestCase] = useState({});
@@ -492,7 +494,9 @@ function SourceCodeChart({
   const changeSourceCodeConfirm = useCallback(() => {
     let nextVersion = parseInt(nowVersion.replace("v", "")) + 1;
     nextVersion = "v" + nextVersion;
-    getNewVersionCode(nextVersion, checkFile, sourceCode).then((res) => {
+    changeFirstTestRunData(false);
+    changeSecondTestRunData(false);
+    getNewVersionCode(nextVersion, checkFile, sourceCode).then(() => {
       changeNowCodeVersion(nextVersion);
     });
   }, [nowVersion, sourceCode, checkFile]);
